@@ -1,0 +1,40 @@
+# Rust
+target/
+**/*.rs.bk
+*.pdb
+
+# Lock files (library crate, not application)
+Cargo.lock
+
+# WASM
+pkg/
+wasm-pack.log
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tgz
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Benchmark results
+/criterion/
+*.svg
+*.html
+
+# Coverage
+*.profraw
+*.profdata
+/coverage/
+
+# Temporary files
+/tmp/
+*.tmp

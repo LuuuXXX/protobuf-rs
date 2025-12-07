@@ -1,0 +1,33 @@
+{
+  "name": "@protobuf-rs/core",
+  "version": "0.1.0",
+  "description": "High-performance Protocol Buffers implementation powered by Rust/WASM",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "keywords": [
+    "protobuf",
+    "protocol-buffers",
+    "wasm",
+    "rust",
+    "serialization",
+    "encoding"
+  ],
+  "author": "LuuuXXX",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LuuuXXX/protobuf-rs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LuuuXXX/protobuf-rs/issues"
+  },
+  "homepage": "https://github.com/LuuuXXX/protobuf-rs#readme",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
