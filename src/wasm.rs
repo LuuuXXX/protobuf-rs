@@ -7,8 +7,8 @@
 //! 本模块提供围绕核心 protobuf 功能的 JavaScript 友好包装器，
 //! 设计用于编译为 WebAssembly。
 
+use crate::{Reader, WireType, Writer};
 use wasm_bindgen::prelude::*;
-use crate::{Writer, Reader, WireType};
 
 /// WebAssembly wrapper for Writer.
 /// Writer 的 WebAssembly 包装器。
@@ -300,7 +300,7 @@ impl WasmReader {
             let len = data.len();
             Reader::new(core::slice::from_raw_parts(ptr, len))
         };
-        
+
         Self {
             inner: reader,
             _data: data,
@@ -345,7 +345,9 @@ impl WasmReader {
     /// Returns [field_number, wire_type]
     #[wasm_bindgen(js_name = readTag)]
     pub fn read_tag(&mut self) -> Result<Vec<u32>, JsValue> {
-        let (field_number, wire_type) = self.inner.read_tag()
+        let (field_number, wire_type) = self
+            .inner
+            .read_tag()
             .map_err(|e| JsValue::from_str(&e.to_string()))?;
         Ok(vec![field_number, wire_type.as_u8() as u32])
     }
@@ -354,7 +356,8 @@ impl WasmReader {
     /// 读取 varint32。
     #[wasm_bindgen(js_name = readVarint32)]
     pub fn read_varint32(&mut self) -> Result<u32, JsValue> {
-        self.inner.read_varint32()
+        self.inner
+            .read_varint32()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -362,7 +365,8 @@ impl WasmReader {
     /// 读取 varint64。
     #[wasm_bindgen(js_name = readVarint64)]
     pub fn read_varint64(&mut self) -> Result<u64, JsValue> {
-        self.inner.read_varint64()
+        self.inner
+            .read_varint64()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -370,7 +374,8 @@ impl WasmReader {
     /// 读取 sint32。
     #[wasm_bindgen(js_name = readSint32)]
     pub fn read_sint32(&mut self) -> Result<i32, JsValue> {
-        self.inner.read_sint32()
+        self.inner
+            .read_sint32()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -378,7 +383,8 @@ impl WasmReader {
     /// 读取 sint64。
     #[wasm_bindgen(js_name = readSint64)]
     pub fn read_sint64(&mut self) -> Result<i64, JsValue> {
-        self.inner.read_sint64()
+        self.inner
+            .read_sint64()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -386,7 +392,8 @@ impl WasmReader {
     /// 读取 int32。
     #[wasm_bindgen(js_name = readInt32)]
     pub fn read_int32(&mut self) -> Result<i32, JsValue> {
-        self.inner.read_int32()
+        self.inner
+            .read_int32()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -394,7 +401,8 @@ impl WasmReader {
     /// 读取 int64。
     #[wasm_bindgen(js_name = readInt64)]
     pub fn read_int64(&mut self) -> Result<i64, JsValue> {
-        self.inner.read_int64()
+        self.inner
+            .read_int64()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -402,7 +410,8 @@ impl WasmReader {
     /// 读取 fixed32。
     #[wasm_bindgen(js_name = readFixed32)]
     pub fn read_fixed32(&mut self) -> Result<u32, JsValue> {
-        self.inner.read_fixed32()
+        self.inner
+            .read_fixed32()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -410,7 +419,8 @@ impl WasmReader {
     /// 读取 fixed64。
     #[wasm_bindgen(js_name = readFixed64)]
     pub fn read_fixed64(&mut self) -> Result<u64, JsValue> {
-        self.inner.read_fixed64()
+        self.inner
+            .read_fixed64()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -418,7 +428,8 @@ impl WasmReader {
     /// 读取 sfixed32。
     #[wasm_bindgen(js_name = readSfixed32)]
     pub fn read_sfixed32(&mut self) -> Result<i32, JsValue> {
-        self.inner.read_sfixed32()
+        self.inner
+            .read_sfixed32()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -426,7 +437,8 @@ impl WasmReader {
     /// 读取 sfixed64。
     #[wasm_bindgen(js_name = readSfixed64)]
     pub fn read_sfixed64(&mut self) -> Result<i64, JsValue> {
-        self.inner.read_sfixed64()
+        self.inner
+            .read_sfixed64()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -434,7 +446,8 @@ impl WasmReader {
     /// 读取浮点数。
     #[wasm_bindgen(js_name = readFloat)]
     pub fn read_float(&mut self) -> Result<f32, JsValue> {
-        self.inner.read_float()
+        self.inner
+            .read_float()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -442,7 +455,8 @@ impl WasmReader {
     /// 读取双精度浮点数。
     #[wasm_bindgen(js_name = readDouble)]
     pub fn read_double(&mut self) -> Result<f64, JsValue> {
-        self.inner.read_double()
+        self.inner
+            .read_double()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -450,7 +464,8 @@ impl WasmReader {
     /// 读取布尔值。
     #[wasm_bindgen(js_name = readBool)]
     pub fn read_bool(&mut self) -> Result<bool, JsValue> {
-        self.inner.read_bool()
+        self.inner
+            .read_bool()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -458,7 +473,8 @@ impl WasmReader {
     /// 读取字符串。
     #[wasm_bindgen(js_name = readString)]
     pub fn read_string(&mut self) -> Result<String, JsValue> {
-        self.inner.read_string()
+        self.inner
+            .read_string()
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -466,7 +482,8 @@ impl WasmReader {
     /// 读取字节。
     #[wasm_bindgen(js_name = readBytes)]
     pub fn read_bytes(&mut self) -> Result<Vec<u8>, JsValue> {
-        self.inner.read_bytes()
+        self.inner
+            .read_bytes()
             .map(|b| b.to_vec())
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
@@ -474,9 +491,10 @@ impl WasmReader {
     /// Skip a field.
     /// 跳过字段。
     pub fn skip(&mut self, wire_type: u8) -> Result<(), JsValue> {
-        let wt = WireType::from_u8(wire_type)
-            .ok_or_else(|| JsValue::from_str("Invalid wire type"))?;
-        self.inner.skip(wt)
+        let wt =
+            WireType::from_u8(wire_type).ok_or_else(|| JsValue::from_str("Invalid wire type"))?;
+        self.inner
+            .skip(wt)
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
@@ -484,7 +502,8 @@ impl WasmReader {
     /// 跳过 n 个字节。
     #[wasm_bindgen(js_name = skipBytes)]
     pub fn skip_bytes(&mut self, n: usize) -> Result<(), JsValue> {
-        self.inner.skip_bytes(n)
+        self.inner
+            .skip_bytes(n)
             .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 }
@@ -501,8 +520,8 @@ pub fn make_tag_util(field_number: u32, wire_type: u8) -> u32 {
 /// 将标签解析为 [字段号, 线类型]。
 #[wasm_bindgen(js_name = parseTag)]
 pub fn parse_tag_util(tag: u32) -> Result<Vec<u32>, JsValue> {
-    let (field_number, wire_type) = crate::wire::parse_tag(tag)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let (field_number, wire_type) =
+        crate::wire::parse_tag(tag).map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(vec![field_number, wire_type.as_u8() as u32])
 }
 

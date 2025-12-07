@@ -25,11 +25,11 @@ use crate::zigzag::{decode_zigzag32, decode_zigzag64};
 ///
 /// let data = vec![8, 42]; // field 1, varint, value 42
 /// let mut reader = Reader::new(&data);
-/// 
+///
 /// let (field, wire_type) = reader.read_tag().unwrap();
 /// assert_eq!(field, 1);
 /// assert_eq!(wire_type, WireType::Varint);
-/// 
+///
 /// let value = reader.read_varint32().unwrap();
 /// assert_eq!(value, 42);
 /// ```
@@ -179,11 +179,11 @@ impl<'a> Reader<'a> {
     /// assert_eq!(value, 300);
     /// ```
     pub fn read_varint32(&mut self) -> Result<u32> {
-        let (value, len) = decode_varint32(&self.buf[self.pos..]).ok_or_else(|| {
+        let (value, len) = decode_varint32(&self.buf[self.pos..]).ok_or(
             DecodeError::InvalidVarint {
                 position: self.pos,
-            }
-        })?;
+            },
+        )?;
         self.pos += len;
         Ok(value)
     }
@@ -202,11 +202,11 @@ impl<'a> Reader<'a> {
     /// assert_eq!(value, 300);
     /// ```
     pub fn read_varint64(&mut self) -> Result<u64> {
-        let (value, len) = decode_varint64(&self.buf[self.pos..]).ok_or_else(|| {
+        let (value, len) = decode_varint64(&self.buf[self.pos..]).ok_or(
             DecodeError::InvalidVarint {
                 position: self.pos,
-            }
-        })?;
+            },
+        )?;
         self.pos += len;
         Ok(value)
     }
@@ -397,9 +397,8 @@ impl<'a> Reader<'a> {
     /// ```
     pub fn read_string(&mut self) -> Result<String> {
         let bytes = self.read_bytes()?;
-        String::from_utf8(bytes.to_vec()).map_err(|_| DecodeError::InvalidUtf8 {
-            position: self.pos,
-        })
+        String::from_utf8(bytes.to_vec())
+            .map_err(|_| DecodeError::InvalidUtf8 { position: self.pos })
     }
 
     /// Read a string reference (length-delimited, zero-copy).
@@ -417,9 +416,7 @@ impl<'a> Reader<'a> {
     /// ```
     pub fn read_string_ref(&mut self) -> Result<&'a str> {
         let bytes = self.read_bytes_ref()?;
-        core::str::from_utf8(bytes).map_err(|_| DecodeError::InvalidUtf8 {
-            position: self.pos,
-        })
+        core::str::from_utf8(bytes).map_err(|_| DecodeError::InvalidUtf8 { position: self.pos })
     }
 
     /// Read bytes (length-delimited).
@@ -656,11 +653,11 @@ mod tests {
     fn test_skip() {
         let data = vec![8, 42, 18, 4, b't', b'e', b's', b't'];
         let mut reader = Reader::new(&data);
-        
+
         // Skip first field
         let (_, wt) = reader.read_tag().unwrap();
         reader.skip(wt).unwrap();
-        
+
         // Read second field
         let (field, _) = reader.read_tag().unwrap();
         assert_eq!(field, 2);
@@ -674,18 +671,18 @@ mod tests {
         writer.write_uint32_field(1, 42);
         writer.write_string_field(2, "test");
         writer.write_bool_field(3, true);
-        
+
         let bytes = writer.finish();
         let mut reader = Reader::new(&bytes);
-        
+
         let (field, _) = reader.read_tag().unwrap();
         assert_eq!(field, 1);
         assert_eq!(reader.read_varint32().unwrap(), 42);
-        
+
         let (field, _) = reader.read_tag().unwrap();
         assert_eq!(field, 2);
         assert_eq!(reader.read_string().unwrap(), "test");
-        
+
         let (field, _) = reader.read_tag().unwrap();
         assert_eq!(field, 3);
         assert_eq!(reader.read_bool().unwrap(), true);

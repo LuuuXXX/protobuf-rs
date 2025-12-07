@@ -57,7 +57,7 @@ pub const fn varint32_size(mut value: u32) -> usize {
     if value == 0 {
         return 1;
     }
-    
+
     let mut size = 0;
     while value > 0 {
         size += 1;
@@ -84,7 +84,7 @@ pub const fn varint64_size(mut value: u64) -> usize {
     if value == 0 {
         return 1;
     }
-    
+
     let mut size = 0;
     while value > 0 {
         size += 1;
@@ -188,7 +188,7 @@ pub fn decode_varint32(buf: &[u8]) -> Option<(u32, usize)> {
         }
 
         let value = (byte & 0x7F) as u32;
-        
+
         // Check for overflow
         if shift >= 32 || (shift == 28 && value > 0x0F) {
             return None;
@@ -235,7 +235,7 @@ pub fn decode_varint64(buf: &[u8]) -> Option<(u64, usize)> {
         }
 
         let value = (byte & 0x7F) as u64;
-        
+
         // Check for overflow
         if shift >= 64 || (shift == 63 && value > 0x01) {
             return None;

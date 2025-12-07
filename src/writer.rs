@@ -9,9 +9,9 @@
 //! 它管理一个可增长的缓冲区，并提供用于写入所有 protobuf 类型的便捷方法。
 
 #[cfg(not(feature = "std"))]
-use alloc::vec::Vec;
-#[cfg(not(feature = "std"))]
 use alloc::string::String;
+#[cfg(not(feature = "std"))]
+use alloc::vec::Vec;
 
 use crate::varint::{encode_varint32, encode_varint64, MAX_VARINT32_BYTES, MAX_VARINT64_BYTES};
 use crate::wire::{make_tag, WireType};
@@ -29,7 +29,7 @@ use crate::zigzag::{encode_zigzag32, encode_zigzag64};
 /// writer.write_tag(1, WireType::Varint);
 /// writer.write_varint32(42);
 /// writer.write_string_field(2, "Hello");
-/// 
+///
 /// let bytes = writer.finish();
 /// assert!(bytes.len() > 0);
 /// ```
@@ -52,9 +52,7 @@ impl Writer {
     /// ```
     #[inline]
     pub fn new() -> Self {
-        Self {
-            buf: Vec::new(),
-        }
+        Self { buf: Vec::new() }
     }
 
     /// Create a new writer with the specified capacity.
@@ -595,7 +593,7 @@ mod tests {
     fn test_writer_reset() {
         let mut writer = Writer::new();
         writer.write_varint32(42);
-        assert!(writer.len() > 0);
+        assert!(!writer.is_empty());
         writer.reset();
         assert_eq!(writer.len(), 0);
     }
@@ -699,8 +697,8 @@ mod tests {
         let mut writer = Writer::new();
         writer.write_uint32_field(1, 150);
         writer.write_string_field(2, "test");
-        
+
         let bytes = writer.finish();
-        assert!(bytes.len() > 0);
+        assert!(!bytes.is_empty());
     }
 }

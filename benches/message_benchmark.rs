@@ -1,9 +1,9 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
-use protobuf_rs::{Writer, Reader};
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use protobuf_rs::{Reader, Writer};
 
 fn create_test_message(size: &str) -> Vec<u8> {
     let mut writer = Writer::new();
-    
+
     match size {
         "tiny" => {
             writer.write_uint32_field(1, 42);
@@ -37,13 +37,13 @@ fn create_test_message(size: &str) -> Vec<u8> {
         }
         _ => {}
     }
-    
+
     writer.finish()
 }
 
 fn bench_message_encode_by_size(c: &mut Criterion) {
     let mut group = c.benchmark_group("message_encode_by_size");
-    
+
     for size in ["tiny", "small", "medium", "large", "xlarge"].iter() {
         group.bench_with_input(BenchmarkId::from_parameter(size), size, |b, &size| {
             b.iter(|| {
@@ -51,16 +51,16 @@ fn bench_message_encode_by_size(c: &mut Criterion) {
             });
         });
     }
-    
+
     group.finish();
 }
 
 fn bench_message_decode_by_size(c: &mut Criterion) {
     let mut group = c.benchmark_group("message_decode_by_size");
-    
+
     for size in ["tiny", "small", "medium", "large", "xlarge"].iter() {
         let data = create_test_message(size);
-        
+
         group.bench_with_input(BenchmarkId::from_parameter(size), &data, |b, data| {
             b.iter(|| {
                 let mut reader = Reader::new(black_box(data));
@@ -71,13 +71,13 @@ fn bench_message_decode_by_size(c: &mut Criterion) {
             });
         });
     }
-    
+
     group.finish();
 }
 
 fn bench_message_roundtrip(c: &mut Criterion) {
     let mut group = c.benchmark_group("message_roundtrip");
-    
+
     for size in ["tiny", "small", "medium", "large"].iter() {
         group.bench_with_input(BenchmarkId::from_parameter(size), size, |b, &size| {
             b.iter(|| {
@@ -90,13 +90,13 @@ fn bench_message_roundtrip(c: &mut Criterion) {
             });
         });
     }
-    
+
     group.finish();
 }
 
 fn bench_writer_reuse(c: &mut Criterion) {
     let mut group = c.benchmark_group("writer_reuse");
-    
+
     group.bench_function("reuse", |b| {
         let mut writer = Writer::with_capacity(256);
         b.iter(|| {
@@ -107,7 +107,7 @@ fn bench_writer_reuse(c: &mut Criterion) {
             black_box(writer.as_slice());
         });
     });
-    
+
     group.bench_function("create_new", |b| {
         b.iter(|| {
             let mut writer = Writer::new();
@@ -117,13 +117,13 @@ fn bench_writer_reuse(c: &mut Criterion) {
             black_box(writer.finish());
         });
     });
-    
+
     group.finish();
 }
 
 fn bench_repeated_fields(c: &mut Criterion) {
     let mut group = c.benchmark_group("repeated_fields");
-    
+
     for count in [10, 100, 1000].iter() {
         group.bench_with_input(BenchmarkId::new("encode", count), count, |b, &count| {
             b.iter(|| {
@@ -134,14 +134,14 @@ fn bench_repeated_fields(c: &mut Criterion) {
                 black_box(writer.finish());
             });
         });
-        
+
         // Prepare data for decode benchmark
         let mut writer = Writer::new();
         for i in 0..*count {
             writer.write_uint32_field(1, i as u32);
         }
         let data = writer.finish();
-        
+
         group.bench_with_input(BenchmarkId::new("decode", count), &data, |b, data| {
             b.iter(|| {
                 let mut reader = Reader::new(black_box(data));
@@ -152,7 +152,7 @@ fn bench_repeated_fields(c: &mut Criterion) {
             });
         });
     }
-    
+
     group.finish();
 }
 

@@ -1,9 +1,11 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
-use protobuf_rs::{Writer, Reader, WireType};
+#![allow(clippy::approx_constant)]
+
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use protobuf_rs::{Reader, WireType, Writer};
 
 fn bench_varint_encode(c: &mut Criterion) {
     let mut group = c.benchmark_group("varint_encode");
-    
+
     group.bench_function("small_values", |b| {
         b.iter(|| {
             let mut writer = Writer::new();
@@ -13,7 +15,7 @@ fn bench_varint_encode(c: &mut Criterion) {
             black_box(writer);
         });
     });
-    
+
     group.bench_function("medium_values", |b| {
         b.iter(|| {
             let mut writer = Writer::new();
@@ -23,7 +25,7 @@ fn bench_varint_encode(c: &mut Criterion) {
             black_box(writer);
         });
     });
-    
+
     group.bench_function("large_values", |b| {
         b.iter(|| {
             let mut writer = Writer::new();
@@ -33,20 +35,20 @@ fn bench_varint_encode(c: &mut Criterion) {
             black_box(writer);
         });
     });
-    
+
     group.finish();
 }
 
 fn bench_varint_decode(c: &mut Criterion) {
     let mut group = c.benchmark_group("varint_decode");
-    
+
     // Prepare test data
     let mut writer = Writer::new();
     for i in 0..1000 {
         writer.write_varint32(i);
     }
     let data = writer.finish();
-    
+
     group.bench_function("decode_1000_varints", |b| {
         b.iter(|| {
             let mut reader = Reader::new(&data);
@@ -55,13 +57,13 @@ fn bench_varint_decode(c: &mut Criterion) {
             }
         });
     });
-    
+
     group.finish();
 }
 
 fn bench_string_encode(c: &mut Criterion) {
     let mut group = c.benchmark_group("string_encode");
-    
+
     group.bench_function("short_strings", |b| {
         b.iter(|| {
             let mut writer = Writer::new();
@@ -71,17 +73,19 @@ fn bench_string_encode(c: &mut Criterion) {
             black_box(writer);
         });
     });
-    
+
     group.bench_function("medium_strings", |b| {
         b.iter(|| {
             let mut writer = Writer::new();
             for _ in 0..100 {
-                writer.write_string(black_box("Hello, this is a medium length string for testing"));
+                writer.write_string(black_box(
+                    "Hello, this is a medium length string for testing",
+                ));
             }
             black_box(writer);
         });
     });
-    
+
     group.bench_function("long_strings", |b| {
         let long_str = "a".repeat(1000);
         b.iter(|| {
@@ -92,13 +96,13 @@ fn bench_string_encode(c: &mut Criterion) {
             black_box(writer);
         });
     });
-    
+
     group.finish();
 }
 
 fn bench_message_encode(c: &mut Criterion) {
     let mut group = c.benchmark_group("message_encode");
-    
+
     group.bench_function("simple_message", |b| {
         b.iter(|| {
             let mut writer = Writer::new();
@@ -108,7 +112,7 @@ fn bench_message_encode(c: &mut Criterion) {
             black_box(writer.finish());
         });
     });
-    
+
     group.bench_function("complex_message", |b| {
         b.iter(|| {
             let mut writer = Writer::new();
@@ -122,20 +126,20 @@ fn bench_message_encode(c: &mut Criterion) {
             black_box(writer.finish());
         });
     });
-    
+
     group.finish();
 }
 
 fn bench_message_decode(c: &mut Criterion) {
     let mut group = c.benchmark_group("message_decode");
-    
+
     // Prepare test message
     let mut writer = Writer::new();
     writer.write_uint32_field(1, 42);
     writer.write_string_field(2, "test");
     writer.write_bool_field(3, true);
     let data = writer.finish();
-    
+
     group.bench_function("simple_message", |b| {
         b.iter(|| {
             let mut reader = Reader::new(black_box(&data));
@@ -147,15 +151,15 @@ fn bench_message_decode(c: &mut Criterion) {
             let _ = reader.read_bool().unwrap();
         });
     });
-    
+
     group.finish();
 }
 
 fn bench_zigzag(c: &mut Criterion) {
-    use protobuf_rs::zigzag::{encode_zigzag32, decode_zigzag32, encode_zigzag64, decode_zigzag64};
-    
+    use protobuf_rs::zigzag::{decode_zigzag32, decode_zigzag64, encode_zigzag32, encode_zigzag64};
+
     let mut group = c.benchmark_group("zigzag");
-    
+
     group.bench_function("encode_zigzag32", |b| {
         b.iter(|| {
             for i in -1000..1000 {
@@ -163,7 +167,7 @@ fn bench_zigzag(c: &mut Criterion) {
             }
         });
     });
-    
+
     group.bench_function("decode_zigzag32", |b| {
         b.iter(|| {
             for i in 0..2000 {
@@ -171,7 +175,7 @@ fn bench_zigzag(c: &mut Criterion) {
             }
         });
     });
-    
+
     group.bench_function("encode_zigzag64", |b| {
         b.iter(|| {
             for i in -1000..1000 {
@@ -179,7 +183,7 @@ fn bench_zigzag(c: &mut Criterion) {
             }
         });
     });
-    
+
     group.bench_function("decode_zigzag64", |b| {
         b.iter(|| {
             for i in 0..2000 {
@@ -187,7 +191,7 @@ fn bench_zigzag(c: &mut Criterion) {
             }
         });
     });
-    
+
     group.finish();
 }
 

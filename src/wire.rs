@@ -42,23 +42,23 @@ pub enum WireType {
     /// Variable-length integer (0)
     /// 可变长度整数 (0)
     Varint = 0,
-    
+
     /// 64-bit fixed-size value (1)
     /// 64 位定长值 (1)
     Fixed64 = 1,
-    
+
     /// Length-delimited data (2)
     /// 长度分隔数据 (2)
     LengthDelimited = 2,
-    
+
     /// Start group (deprecated, 3)
     /// 开始组 (已弃用, 3)
     StartGroup = 3,
-    
+
     /// End group (deprecated, 4)
     /// 结束组 (已弃用, 4)
     EndGroup = 4,
-    
+
     /// 32-bit fixed-size value (5)
     /// 32 位定长值 (5)
     Fixed32 = 5,
@@ -186,8 +186,9 @@ pub fn parse_tag(tag: u32) -> Result<(u32, WireType)> {
     let wire_type_value = (tag & 0x7) as u8;
     let field_number = tag >> 3;
 
-    let wire_type = WireType::from_u8(wire_type_value)
-        .ok_or(DecodeError::InvalidWireType { wire_type: wire_type_value })?;
+    let wire_type = WireType::from_u8(wire_type_value).ok_or(DecodeError::InvalidWireType {
+        wire_type: wire_type_value,
+    })?;
 
     if !is_valid_field_number(field_number) {
         return Err(DecodeError::InvalidTag { tag });
@@ -268,10 +269,16 @@ mod tests {
     #[test]
     fn test_parse_tag_invalid_field_number() {
         let tag = (0 << 3) | 0; // field number 0
-        assert!(matches!(parse_tag(tag), Err(DecodeError::InvalidTag { .. })));
+        assert!(matches!(
+            parse_tag(tag),
+            Err(DecodeError::InvalidTag { .. })
+        ));
 
         let tag = (19000 << 3) | 0; // reserved field number
-        assert!(matches!(parse_tag(tag), Err(DecodeError::InvalidTag { .. })));
+        assert!(matches!(
+            parse_tag(tag),
+            Err(DecodeError::InvalidTag { .. })
+        ));
     }
 
     #[test]
