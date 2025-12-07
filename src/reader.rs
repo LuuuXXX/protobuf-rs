@@ -543,6 +543,9 @@ impl<'a> Reader<'a> {
 mod tests {
     use super::*;
     use crate::Writer;
+    
+    #[cfg(not(feature = "std"))]
+    use alloc::vec;
 
     #[test]
     fn test_reader_new() {
