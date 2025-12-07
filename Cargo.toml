@@ -1,0 +1,53 @@
+[package]
+name = "protobuf-rs"
+version = "0.1.0"
+edition = "2021"
+authors = ["LuuuXXX"]
+description = "High-performance Rust implementation of Protocol Buffers core - Rust 高性能 Protocol Buffers 核心实现"
+license = "BSD-3-Clause"
+repository = "https://github.com/LuuuXXX/protobuf-rs"
+keywords = ["protobuf", "serialization", "wasm", "protocol-buffers"]
+categories = ["encoding", "wasm"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["std"]
+std = []
+wasm = ["wasm-bindgen", "js-sys"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2", optional = true }
+js-sys = { version = "0.3", optional = true }
+thiserror = "1.0"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+wasm-bindgen-test = "0.3"
+proptest = "1.0"
+rand = "0.8"
+
+[[bench]]
+name = "benchmark"
+harness = false
+
+[[bench]]
+name = "varint_benchmark"
+harness = false
+
+[[bench]]
+name = "message_benchmark"
+harness = false
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.bench]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false
