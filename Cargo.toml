@@ -25,8 +25,12 @@ thiserror = "2.0"
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
 rand = "0.9"
+
+# WASM-specific dependencies: getrandom needs wasm_js feature for WASM random number generation
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
 getrandom = { version = "0.3", features = ["wasm_js"] }
 
+# Non-WASM dependencies: criterion and proptest have dependencies that don't support WASM
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { version = "0.8", features = ["html_reports"] }
 proptest = "1.0"
