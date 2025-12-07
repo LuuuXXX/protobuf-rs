@@ -43,7 +43,7 @@ jobs:
           auto-push: true
       
       - name: Upload benchmark results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: rust-benchmark-results
           path: target/criterion/
@@ -91,7 +91,7 @@ jobs:
         run: npm run report
       
       - name: Upload benchmark report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: comparison-benchmark-results
           path: bench-js/benchmark-results.md
