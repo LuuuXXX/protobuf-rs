@@ -1,8 +1,10 @@
 # Rust
 target/
-Cargo.lock
 **/*.rs.bk
 *.pdb
+
+# Lock files (library crate, not application)
+Cargo.lock
 
 # WASM
 pkg/

@@ -1,0 +1,54 @@
+version: 2
+
+updates:
+  # Rust dependencies
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "LuuuXXX"
+    labels:
+      - "dependencies"
+      - "rust"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "LuuuXXX"
+    labels:
+      - "dependencies"
+      - "github-actions"
+
+  # JavaScript dependencies for bench-js
+  - package-ecosystem: "npm"
+    directory: "/bench-js"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "LuuuXXX"
+    labels:
+      - "dependencies"
+      - "javascript"
+
+  # JavaScript dependencies for js
+  - package-ecosystem: "npm"
+    directory: "/js"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "LuuuXXX"
+    labels:
+      - "dependencies"
+      - "javascript"

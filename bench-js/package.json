@@ -1,0 +1,22 @@
+{
+  "name": "protobuf-rs-benchmarks",
+  "version": "0.1.0",
+  "description": "Benchmark comparison between protobuf-rs WASM and protobuf.js",
+  "private": true,
+  "scripts": {
+    "benchmark": "node benchmark.js",
+    "report": "node generate-report.js",
+    "detailed": "node detailed-benchmark.js"
+  },
+  "dependencies": {
+    "protobufjs": "^7.2.5",
+    "benchmark": "^2.1.4"
+  },
+  "devDependencies": {
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
