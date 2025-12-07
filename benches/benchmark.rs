@@ -1,7 +1,8 @@
 #![allow(clippy::approx_constant)]
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
-use protobuf_rs::{Reader, WireType, Writer};
+use criterion::{criterion_group, criterion_main, Criterion};
+use protobuf_rs::{Reader, Writer};
+use std::hint::black_box;
 
 fn bench_varint_encode(c: &mut Criterion) {
     let mut group = c.benchmark_group("varint_encode");

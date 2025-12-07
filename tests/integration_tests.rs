@@ -26,7 +26,7 @@ fn test_simple_message_roundtrip() {
     let (field3, wire3) = reader.read_tag().unwrap();
     assert_eq!(field3, 3);
     assert_eq!(wire3, WireType::Varint);
-    assert_eq!(reader.read_bool().unwrap(), true);
+    assert!(reader.read_bool().unwrap());
 
     assert!(reader.is_eof());
 }

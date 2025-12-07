@@ -1,5 +1,6 @@
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use protobuf_rs::varint::{decode_varint32, decode_varint64, encode_varint32, encode_varint64};
+use std::hint::black_box;
 
 fn bench_varint32_encode(c: &mut Criterion) {
     let mut group = c.benchmark_group("varint32_encode");

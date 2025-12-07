@@ -599,8 +599,8 @@ mod tests {
     fn test_read_bool() {
         let data = vec![1, 0];
         let mut reader = Reader::new(&data);
-        assert_eq!(reader.read_bool().unwrap(), true);
-        assert_eq!(reader.read_bool().unwrap(), false);
+        assert!(reader.read_bool().unwrap());
+        assert!(!reader.read_bool().unwrap());
     }
 
     #[test]
@@ -679,7 +679,7 @@ mod tests {
 
         let (field, _) = reader.read_tag().unwrap();
         assert_eq!(field, 3);
-        assert_eq!(reader.read_bool().unwrap(), true);
+        assert!(reader.read_bool().unwrap());
     }
 
     #[test]

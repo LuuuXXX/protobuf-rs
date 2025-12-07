@@ -268,13 +268,13 @@ mod tests {
 
     #[test]
     fn test_parse_tag_invalid_field_number() {
-        let tag = (0 << 3) | 0; // field number 0
+        let tag = 0; // field number 0
         assert!(matches!(
             parse_tag(tag),
             Err(DecodeError::InvalidTag { .. })
         ));
 
-        let tag = (19000 << 3) | 0; // reserved field number
+        let tag = 19000 << 3; // reserved field number
         assert!(matches!(
             parse_tag(tag),
             Err(DecodeError::InvalidTag { .. })
