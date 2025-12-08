@@ -1,5 +1,9 @@
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+#![allow(clippy::approx_constant)]
+#![allow(clippy::useless_vec)]
+
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use protobuf_rs::{Reader, Writer};
+use std::hint::black_box;
 
 fn create_test_message(size: &str) -> Vec<u8> {
     let mut writer = Writer::new();

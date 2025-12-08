@@ -17,6 +17,12 @@ pub struct WasmWriter {
     inner: Writer,
 }
 
+impl Default for WasmWriter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[wasm_bindgen]
 impl WasmWriter {
     /// Create a new WasmWriter.

@@ -179,11 +179,8 @@ impl<'a> Reader<'a> {
     /// assert_eq!(value, 300);
     /// ```
     pub fn read_varint32(&mut self) -> Result<u32> {
-        let (value, len) = decode_varint32(&self.buf[self.pos..]).ok_or(
-            DecodeError::InvalidVarint {
-                position: self.pos,
-            },
-        )?;
+        let (value, len) = decode_varint32(&self.buf[self.pos..])
+            .ok_or(DecodeError::InvalidVarint { position: self.pos })?;
         self.pos += len;
         Ok(value)
     }
@@ -202,11 +199,8 @@ impl<'a> Reader<'a> {
     /// assert_eq!(value, 300);
     /// ```
     pub fn read_varint64(&mut self) -> Result<u64> {
-        let (value, len) = decode_varint64(&self.buf[self.pos..]).ok_or(
-            DecodeError::InvalidVarint {
-                position: self.pos,
-            },
-        )?;
+        let (value, len) = decode_varint64(&self.buf[self.pos..])
+            .ok_or(DecodeError::InvalidVarint { position: self.pos })?;
         self.pos += len;
         Ok(value)
     }
@@ -550,6 +544,9 @@ mod tests {
     use super::*;
     use crate::Writer;
 
+    #[cfg(not(feature = "std"))]
+    use alloc::vec;
+
     #[test]
     fn test_reader_new() {
         let data = vec![1, 2, 3];
@@ -605,8 +602,8 @@ mod tests {
     fn test_read_bool() {
         let data = vec![1, 0];
         let mut reader = Reader::new(&data);
-        assert_eq!(reader.read_bool().unwrap(), true);
-        assert_eq!(reader.read_bool().unwrap(), false);
+        assert!(reader.read_bool().unwrap());
+        assert!(!reader.read_bool().unwrap());
     }
 
     #[test]
@@ -685,7 +682,7 @@ mod tests {
 
         let (field, _) = reader.read_tag().unwrap();
         assert_eq!(field, 3);
-        assert_eq!(reader.read_bool().unwrap(), true);
+        assert!(reader.read_bool().unwrap());
     }
 
     #[test]
