@@ -2,17 +2,17 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
 // Phase 3: Advanced Performance Modules
-mod simd;
-mod reader;
-mod writer;
-mod pool;
 mod parallel;
+mod pool;
+mod reader;
+mod simd;
+mod writer;
 
 // Re-export Phase 3 functions
-pub use simd::{encode_varint_batch_simd, decode_varint_batch_simd};
+pub use parallel::{decode_varints_parallel, encode_varints_parallel, process_u32_batch_parallel};
 pub use reader::Reader;
+pub use simd::{decode_varint_batch_simd, encode_varint_batch_simd};
 pub use writer::Writer;
-pub use parallel::{encode_varints_parallel, decode_varints_parallel, process_u32_batch_parallel};
 
 const MAX_VARINT_BYTES: usize = 10;
 const MAX_WIRE_TYPE: i64 = 5;
