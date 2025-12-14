@@ -110,7 +110,9 @@ switch (platform) {
         nativeBinding = require('protobuf-rs-darwin-universal')
       }
       break
-    } catch {}
+    } catch (e) {
+      loadError = e
+    }
     switch (arch) {
       case 'x64':
         localFileExisted = existsSync(join(__dirname, 'protobuf-rs.darwin-x64.node'))
@@ -304,9 +306,8 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { sum, decodeVarint, encodeVarint, decodeZigzag, encodeZigzag, decodeFieldTag, encodeFieldTag, ProtobufParser } = nativeBinding
+const { decodeVarint, encodeVarint, decodeZigzag, encodeZigzag, decodeFieldTag, encodeFieldTag, ProtobufParser } = nativeBinding
 
-module.exports.sum = sum
 module.exports.decodeVarint = decodeVarint
 module.exports.encodeVarint = encodeVarint
 module.exports.decodeZigzag = decodeZigzag

@@ -1,8 +1,11 @@
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
-const MAX_VARINT_BYTES: usize = 9;
+const MAX_VARINT_BYTES: usize = 10;
 const MAX_WIRE_TYPE: i64 = 5;
+const MAX_FIELD_NUMBER: i64 = 536_870_911; // 2^29 - 1
+const RESERVED_RANGE_START: i64 = 19_000;
+const RESERVED_RANGE_END: i64 = 19_999;
 
 #[napi]
 pub struct ProtobufParser {
@@ -46,8 +49,13 @@ pub fn decode_varint(buffer: Buffer) -> Result<i64> {
     let mut shift = 0;
 
     for (i, &byte) in bytes.iter().enumerate() {
-        if i > MAX_VARINT_BYTES {
+        if i >= MAX_VARINT_BYTES {
             return Err(Error::from_reason("Varint too long"));
+        }
+
+        // On the 10th byte, only 1 bit should be set to avoid overflow
+        if i == 9 && byte > 1 {
+            return Err(Error::from_reason("Varint overflow"));
         }
 
         result |= ((byte & 0x7F) as u64) << shift;
@@ -112,15 +120,13 @@ pub fn decode_field_tag(buffer: Buffer) -> Result<Vec<i64>> {
 
 #[napi]
 pub fn encode_field_tag(field_number: i64, wire_type: i64) -> Result<Buffer> {
-    if field_number < 0 || !(0..=MAX_WIRE_TYPE).contains(&wire_type) {
+    if !(1..=MAX_FIELD_NUMBER).contains(&field_number)
+        || (RESERVED_RANGE_START..=RESERVED_RANGE_END).contains(&field_number)
+        || !(0..=MAX_WIRE_TYPE).contains(&wire_type)
+    {
         return Err(Error::from_reason("Invalid field number or wire type"));
     }
 
     let tag = (field_number << 3) | wire_type;
     encode_varint(tag)
-}
-
-#[napi]
-pub fn sum(a: i32, b: i32) -> i32 {
-    a + b
 }
