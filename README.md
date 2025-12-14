@@ -9,6 +9,8 @@
 
 A **high-performance Protocol Buffers implementation for Node.js** powered by Rust and NAPI-RS.
 
+**[English](README.md)** | **[简体中文](README.zh.md)**
+
 ## 🚀 Performance
 
 ### Quick Performance Summary
@@ -422,14 +424,33 @@ See the [Integration Guide](docs/INTEGRATION_GUIDE.md) for complete documentatio
 
 ## 📝 Examples
 
+Check out the [examples/](examples/) directory for comprehensive examples:
+
 - `examples/protobufjs-migration.js` - Complete migration guide with benchmarks
+- `examples/drop-in-replacement.js` - Drop-in replacement demonstration
+- `examples/basic-encode-decode.js` - Basic encoding and decoding operations
+- `examples/base64-encoding.js` - Base64 encoding for data transmission
+- `examples/long-type-handling.js` - Handling 64-bit integers (Long types)
+- `examples/streaming-processing.js` - Streaming data processing
 - `test/protobufjs-compatibility.js` - Comprehensive compatibility test suite
 
 ## 📖 Documentation
 
+### English Documentation
+
 - [Performance Report](docs/PERFORMANCE_REPORT.md) - Detailed performance analysis and benchmarks
 - [Integration Guide](docs/INTEGRATION_GUIDE.md) - Complete integration documentation
+- [Compatibility Report](docs/COMPATIBILITY_REPORT.md) - protobuf.js compatibility details
 - [CHANGELOG](CHANGELOG.md) - Version history and migration guides
+
+### 中文文档 (Chinese Documentation)
+
+- [中文 README](README.zh.md) - 完整的中文说明文档
+- [API 文档](docs/zh_CN/API.md) - 详细的 API 参考
+- [常见问题 FAQ](docs/zh_CN/FAQ.md) - 常见问题解答
+- [性能报告](docs/zh_CN/PERFORMANCE_REPORT.md) - 性能分析和基准测试（即将推出）
+- [集成指南](docs/zh_CN/INTEGRATION_GUIDE.md) - 完整的集成文档（即将推出）
+- [兼容性报告](docs/zh_CN/COMPATIBILITY_REPORT.md) - protobuf.js 兼容性详情（即将推出）
 
 ## 🔧 Building from Source
 
