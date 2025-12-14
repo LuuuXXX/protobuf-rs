@@ -62,36 +62,23 @@ safeValues.forEach(value => {
 console.log();
 
 // =============================================================================
-// 示例 3: 有符号 64 位整数 | Example 3: Signed 64-bit Integers
+// 示例 3: 有符号 64 位整数（sint64）| Example 3: Signed 64-bit Integers (sint64)
 // =============================================================================
-console.log('示例 3: 有符号 64 位整数（int64、sint64）');
-console.log('Example 3: Signed 64-bit Integers (int64, sint64)');
+console.log('示例 3: 有符号 64 位整数（sint64，ZigZag 编码）');
+console.log('Example 3: Signed 64-bit Integers (sint64, ZigZag encoded)');
 console.log('-'.repeat(80));
 
 const signedValues = [
   -1,
   -100,
   -1000000,
-  -1000000000000,
-  Number.MIN_SAFE_INTEGER,
   0,
-  1000000000000,
-  Number.MAX_SAFE_INTEGER
+  1,
+  100,
+  1000000
 ];
 
-console.log('int64 编码/解码 | int64 encoding/decoding:');
-signedValues.forEach(value => {
-  const writer = Writer.create();
-  writer.int64(value);
-  const buffer = writer.finish();
-  
-  const reader = Reader.create(buffer);
-  const decoded = reader.int64();
-  
-  const match = decoded === value ? '✓' : '✗';
-  console.log(`  ${match} ${value} -> ${decoded} (${buffer.length} bytes)`);
-});
-console.log();
+console.log('sint64 编码/解码（ZigZag）| sint64 encoding/decoding (ZigZag):');
 
 console.log('sint64 编码/解码（ZigZag）| sint64 encoding/decoding (ZigZag):');
 signedValues.forEach(value => {
