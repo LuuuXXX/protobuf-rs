@@ -16,7 +16,8 @@
     "build": "napi build --platform --release",
     "build:debug": "napi build --platform",
     "prepublishOnly": "napi prepublish -t npm",
-    "test": "node test.js",
+    "test": "node test.js && node test/protobufjs-compatibility.js",
+    "test:example": "node examples/protobufjs-migration.js",
     "universal": "napi universal",
     "version": "napi version"
   },
@@ -29,6 +30,8 @@
   "author": "LuuuXXX",
   "license": "MIT",
   "devDependencies": {
-    "@napi-rs/cli": "^3.5.0"
+    "@napi-rs/cli": "^3.5.0",
+    "protobufjs": "^7.2.5",
+    "tape": "^5.7.0"
   }
 }
