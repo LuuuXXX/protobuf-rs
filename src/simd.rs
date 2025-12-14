@@ -2,17 +2,22 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
 /// Batch encode multiple uint32 values using SIMD optimizations when available
+/// 
+/// Note: Currently uses optimized scalar implementation. Hardware SIMD (AVX2/NEON)
+/// support will be added in a future release.
 #[napi]
 pub fn encode_varint_batch_simd(values: Vec<u32>) -> Result<Buffer> {
-    // For now, use scalar implementation with batching optimization
-    // SIMD implementation would require platform-specific code
+    // TODO: Add hardware SIMD support in v1.1
     encode_varint_batch_scalar(&values)
 }
 
 /// Batch decode varints from buffer using SIMD optimizations when available
+///
+/// Note: Currently uses optimized scalar implementation. Hardware SIMD (AVX2/NEON)
+/// support will be added in a future release.
 #[napi]
 pub fn decode_varint_batch_simd(buffer: Buffer) -> Result<Vec<u32>> {
-    // For now, use scalar implementation with batching optimization
+    // TODO: Add hardware SIMD support in v1.1
     decode_varint_batch_scalar(buffer.as_ref())
 }
 

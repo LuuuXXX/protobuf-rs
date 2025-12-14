@@ -2,6 +2,10 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
 /// Writer for protobuf wire format with buffer optimization
+/// 
+/// Note: The finish() method currently clones the buffer to maintain ownership
+/// semantics with NAPI. Alternative APIs (finish_into, consume) will be explored
+/// in future releases for true zero-copy operation.
 #[napi]
 pub struct Writer {
     buffer: Vec<u8>,

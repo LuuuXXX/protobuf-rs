@@ -2,6 +2,10 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
 /// Reader for protobuf wire format with zero-copy optimizations
+/// 
+/// Note: The constructor currently copies the buffer for safety with NAPI bindings.
+/// This ensures proper lifetime management across the Rust-JS boundary.
+/// True zero-copy will be evaluated in future releases based on NAPI improvements.
 #[napi]
 pub struct Reader {
     buffer: Vec<u8>,

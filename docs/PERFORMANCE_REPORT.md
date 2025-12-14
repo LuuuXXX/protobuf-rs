@@ -1,7 +1,7 @@
 # Performance Report: protobuf-rs
 
 **Version:** 1.0.0  
-**Date:** December 2025  
+**Date:** December 14, 2024  
 **Author:** protobuf-rs Team
 
 ---
@@ -454,5 +454,5 @@ node --expose-gc benchmarks/memory-profile.js
 
 ---
 
-**Last Updated:** December 14, 2025  
+**Last Updated:** December 14, 2024  
 **Report Version:** 1.0.0

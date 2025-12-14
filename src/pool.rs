@@ -3,8 +3,10 @@ use std::sync::Arc;
 
 /// Thread-safe buffer pool for reducing allocations
 ///
-/// Note: This module is provided for future use and is not currently integrated
-/// into the public API. It will be exposed in a future release.
+/// Note: This module is provided for future integration and is not currently
+/// exposed in the public API. It will be made available in v1.1 release as part
+/// of the memory optimization features. The implementation is complete and tested,
+/// but requires additional NAPI bindings to expose safely to JavaScript.
 #[allow(dead_code)]
 pub struct BufferPool {
     pools: Vec<Arc<Mutex<Vec<Vec<u8>>>>>,

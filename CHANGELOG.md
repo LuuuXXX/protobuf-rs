@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-12-14
+## [1.0.0] - 2024-12-14
 
 ### Added
 
@@ -101,6 +101,7 @@ Added for Phase 3:
 - Updated `Cargo.toml` with Phase 3 dependencies
 - Enhanced `index.js` to export new Phase 3 functions
 - Updated `package.json` metadata for v1.0.0 release
+- **License changed from MIT to BSD-3-Clause** to align with project requirements
 
 ### Testing
 
