@@ -71,6 +71,18 @@ protobuf.Writer = Writer;
 // All existing code gets performance boost automatically!
 ```
 
+#### Verbose Mode
+
+By default, the adapter operates silently. To see initialization messages (useful for debugging):
+
+```bash
+PROTOBUF_RS_VERBOSE=true node your-app.js
+```
+
+This will output messages like:
+- `✓ protobuf-rs: Using native Rust implementation`
+- `⚠ protobuf-rs: Native module not available, falling back to protobuf.js`
+
 ---
 
 ## API Reference

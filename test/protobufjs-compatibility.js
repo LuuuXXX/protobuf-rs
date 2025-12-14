@@ -8,6 +8,8 @@
 const tape = require('tape');
 const { Reader, Writer, isNativeAvailable } = require('../integration/protobufjs-adapter');
 
+console.log('\n🧪 Running protobuf.js compatibility tests...\n');
+
 tape.test('Basic Reader/Writer compatibility', (t) => {
   const writer = Writer.create();
   writer.uint32(300);
@@ -357,5 +359,3 @@ tape.test('64-bit integer support', (t) => {
   
   t.end();
 });
-
-console.log('\n🧪 Running protobuf.js compatibility tests...\n');

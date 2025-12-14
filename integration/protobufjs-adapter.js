@@ -9,13 +9,20 @@ let nativeModule = null;
 let isNative = false;
 let protobufjs = null;
 
+// Set to false to suppress initialization messages
+const VERBOSE = process.env.PROTOBUF_RS_VERBOSE === 'true';
+
 // Try to load native Rust module
 try {
   nativeModule = require('../index');
   isNative = true;
-  console.log('✓ protobuf-rs: Using native Rust implementation');
+  if (VERBOSE) {
+    console.log('✓ protobuf-rs: Using native Rust implementation');
+  }
 } catch (err) {
-  console.log('⚠ protobuf-rs: Native module not available, falling back to protobuf.js');
+  if (VERBOSE) {
+    console.log('⚠ protobuf-rs: Native module not available, falling back to protobuf.js');
+  }
   try {
     protobufjs = require('protobufjs');
   } catch (pbErr) {
@@ -353,8 +360,9 @@ class Reader {
           this.skip(this.uint32());
           return this;
         case 3: // Start group (deprecated)
-          while ((wireType = this.uint32() & 7) !== 4) {
-            this.skipType(wireType);
+          let nestedWireType;
+          while ((nestedWireType = this.uint32() & 7) !== 4) {
+            this.skipType(nestedWireType);
           }
           return this;
         case 5: // 32-bit
