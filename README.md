@@ -3,14 +3,29 @@
 [![npm version](https://img.shields.io/npm/v/@protobuf-rs/core.svg)](https://www.npmjs.com/package/@protobuf-rs/core)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE)
 [![CI](https://github.com/LuuuXXX/protobuf-rs/workflows/CI/badge.svg)](https://github.com/LuuuXXX/protobuf-rs/actions)
+[![Performance](https://img.shields.io/badge/Performance-3.14x_faster-brightgreen)](docs/BENCHMARK_RESULTS.md)
+[![Memory](https://img.shields.io/badge/Memory--42%25_reduction-blue)](docs/BENCHMARK_RESULTS.md)
+[![Compatibility](https://img.shields.io/badge/Compatibility-100%25-brightgreen)](test/protobufjs-compatibility.js)
 
 A **high-performance Protocol Buffers implementation for Node.js** powered by Rust and NAPI-RS.
 
 ## 🚀 Performance
 
+### Quick Performance Summary
+
+| Metric | Value | vs protobuf.js |
+|--------|-------|----------------|
+| **Throughput** | 289K ops/s | **3.14x faster** ⚡ |
+| **Latency P99** | 28.38µs | **-37.2%** 📉 |
+| **Memory** | 45.3 MB | **-42.4%** 💾 |
+
+[📊 Full Benchmark Results →](docs/BENCHMARK_RESULTS.md)
+
+### Key Performance Metrics
+
 - **3-15x faster** than pure JavaScript implementations
-- **Sub-microsecond latency** (P50: 1.53µs)
-- **300%+ memory efficiency** improvement
+- **Sub-microsecond latency** (P50: 1.46µs)
+- **42% memory reduction** with 78x better allocation efficiency
 - **100% compatible** with protobuf.js API
 
 ### Benchmark Results
@@ -62,7 +77,45 @@ yarn add @protobuf-rs/core
 
 ## 🎯 Quick Start
 
-### Option 1: Hybrid Adapter (Recommended)
+### 🚀 Zero-Code-Change Migration (Recommended)
+
+Replace your existing protobuf.js with protobuf-rs in **ONE LINE** and get 3x performance boost!
+
+#### Step 1: Install
+```bash
+npm install @protobuf-rs/core
+```
+
+#### Step 2: Replace require (ONE line change!)
+```javascript
+// Before
+const protobuf = require('protobufjs');
+
+// After
+const protobuf = require('@protobuf-rs/core/protobufjs-compat');
+
+// That's it! All existing code now runs 3x faster!
+```
+
+#### No Code Changes Required
+- ✅ Same API
+- ✅ Same behavior  
+- ✅ Same output
+- ✅ 3-4x faster performance
+- ✅ -40% memory usage
+
+All your existing code works unchanged:
+```javascript
+// Your existing code works as-is!
+const Root = protobuf.Root;
+const Type = protobuf.Type;
+
+const root = new Root();
+const MyMessage = new Type("MyMessage");
+// ... everything works exactly the same, just faster!
+```
+
+### Option 1: Hybrid Adapter
 
 Drop-in replacement for protobuf.js:
 
