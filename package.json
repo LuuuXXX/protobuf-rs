@@ -18,6 +18,7 @@
     "prepublishOnly": "npm run build && npm test",
     "test": "node test.js && node test/protobufjs-compatibility.js && node test/protobufjs-compat-test.js",
     "test:example": "node examples/protobufjs-migration.js",
+    "test:drop-in": "node examples/drop-in-replacement.js",
     "benchmark": "node benchmarks/real-world.js",
     "benchmark:comprehensive": "node benchmarks/comprehensive.js",
     "benchmark:cpu": "node benchmarks/cpu-profile.js",
