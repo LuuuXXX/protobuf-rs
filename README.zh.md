@@ -3,8 +3,8 @@
 [![npm version](https://img.shields.io/npm/v/@protobuf-rs/core.svg)](https://www.npmjs.com/package/@protobuf-rs/core)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE)
 [![CI](https://github.com/LuuuXXX/protobuf-rs/workflows/CI/badge.svg)](https://github.com/LuuuXXX/protobuf-rs/actions)
-[![性能](https://img.shields.io/badge/性能-快3.14倍-brightgreen)](docs/zh_CN/BENCHMARK_RESULTS.md)
-[![内存](https://img.shields.io/badge/内存--42%25-blue)](docs/zh_CN/BENCHMARK_RESULTS.md)
+[![性能](https://img.shields.io/badge/性能-快3.14倍-brightgreen)](docs/BENCHMARK_RESULTS.md)
+[![内存](https://img.shields.io/badge/内存--42%25-blue)](docs/BENCHMARK_RESULTS.md)
 [![兼容性](https://img.shields.io/badge/兼容性-100%25-brightgreen)](test/protobufjs-compatibility.js)
 
 **基于 Rust 和 NAPI-RS 的高性能 Node.js Protocol Buffers 实现**
@@ -21,7 +21,7 @@
 | **P99 延迟** | 28.38µs | **降低 37.2%** 📉 |
 | **内存占用** | 45.3 MB | **减少 42.4%** 💾 |
 
-[📊 完整性能测试报告 →](docs/zh_CN/BENCHMARK_RESULTS.md)
+[📊 完整性能测试报告 →](docs/BENCHMARK_RESULTS.md)
 
 ### 关键性能指标
 
@@ -39,7 +39,7 @@
 | Reader 操作 | 621K ops/sec | **15x+** |
 | Writer 操作 | 397K ops/sec | **10x+** |
 
-详细分析请参阅 [性能报告](docs/zh_CN/PERFORMANCE_REPORT.md)。
+详细分析请参阅 [性能报告](docs/PERFORMANCE_REPORT.md)。
 
 ## ✨ 特性
 
@@ -349,7 +349,7 @@ npm run benchmark:memory
 
 ### 详细分析
 
-请参阅 [docs/zh_CN/PERFORMANCE_REPORT.md](docs/zh_CN/PERFORMANCE_REPORT.md) 了解：
+请参阅 [docs/PERFORMANCE_REPORT.md](docs/PERFORMANCE_REPORT.md) 了解：
 - 完整的测试方法
 - 与竞品的对比
 - 真实案例研究
@@ -370,7 +370,7 @@ protobuf.Writer = Writer;
 // 所有现有代码获得 3-15 倍性能提升！
 ```
 
-请参阅[集成指南](docs/zh_CN/INTEGRATION_GUIDE.md)获取完整文档。
+请参阅[集成指南](docs/INTEGRATION_GUIDE.md)获取完整文档。
 
 ## 📝 示例
 
@@ -388,9 +388,9 @@ protobuf.Writer = Writer;
 
 - [架构文档](docs/zh_CN/architecture.md) - 系统架构和设计详解
 - [差异性分析](docs/zh_CN/comparison.md) - 与 protobuf.js 的详细对比
-- [性能报告](docs/zh_CN/PERFORMANCE_REPORT.md) - 详细的性能分析和基准测试
-- [集成指南](docs/zh_CN/INTEGRATION_GUIDE.md) - 完整的集成文档
-- [兼容性报告](docs/zh_CN/COMPATIBILITY_REPORT.md) - protobuf.js 兼容性详情
+- [性能报告](docs/PERFORMANCE_REPORT.md) - 详细的性能分析和基准测试
+- [集成指南](docs/INTEGRATION_GUIDE.md) - 完整的集成文档
+- [兼容性报告](docs/COMPATIBILITY_REPORT.md) - protobuf.js 兼容性详情
 - [API 文档](docs/zh_CN/API.md) - 完整的 API 参考
 - [常见问题](docs/zh_CN/FAQ.md) - 常见问题解答
 - [文档索引](docs/zh_CN/README.md) - 中文文档导航

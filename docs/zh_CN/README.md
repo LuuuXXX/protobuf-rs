@@ -38,17 +38,17 @@
 
 ### 性能和集成
 
-- **[性能报告](PERFORMANCE_REPORT.md)** - 详细的性能分析
+- **[性能报告](../PERFORMANCE_REPORT.md)** - 详细的性能分析
   - 真实场景基准测试
   - 与 protobuf.js 对比
   - 性能优化建议
 
-- **[集成指南](INTEGRATION_GUIDE.md)** - 完整的集成文档
+- **[集成指南](../INTEGRATION_GUIDE.md)** - 完整的集成文档
   - 零代码迁移指南
   - 与 protobuf.js 集成
   - 最佳实践
 
-- **[兼容性报告](COMPATIBILITY_REPORT.md)** - protobuf.js 兼容性详情
+- **[兼容性报告](../COMPATIBILITY_REPORT.md)** - protobuf.js 兼容性详情
   - API 兼容性
   - 行为一致性
   - 已知差异
@@ -91,11 +91,11 @@
 ### 深入理解
 1. 阅读 [架构文档](architecture.md) 理解系统设计
 2. 查看 [差异性分析](comparison.md) 了解与 protobuf.js 的区别
-3. 研究 [性能报告](PERFORMANCE_REPORT.md) 掌握性能优化
+3. 研究 [性能报告](../PERFORMANCE_REPORT.md) 掌握性能优化
 
 ### 项目集成
-1. 按照 [集成指南](INTEGRATION_GUIDE.md) 集成到项目
-2. 参考 [兼容性报告](COMPATIBILITY_REPORT.md) 确保兼容性
+1. 按照 [集成指南](../INTEGRATION_GUIDE.md) 集成到项目
+2. 参考 [兼容性报告](../COMPATIBILITY_REPORT.md) 确保兼容性
 3. 使用 [API 文档](API.md) 作为开发参考
 
 ## 📊 性能数据速览
@@ -108,7 +108,7 @@
 | **Writer 操作** | 397K ops/s | 120K ops/s | **3.31x** |
 | **内存占用** | 45.3 MB | 78.6 MB | **-42%** |
 
-详见 [性能报告](PERFORMANCE_REPORT.md)
+详见 [性能报告](../PERFORMANCE_REPORT.md)
 
 ## 🎯 核心优势
 
