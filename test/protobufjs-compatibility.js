@@ -292,24 +292,58 @@ tape.test('skip() method', (t) => {
 tape.test('skipType() with different wire types', (t) => {
   const writer = Writer.create();
   
-  // Wire type 0 (varint)
+  // Wire type 0 (varint) - field 1
+  writer.uint32((1 << 3) | 0);
   writer.uint32(100);
-  // Wire type 2 (length-delimited)
+  
+  // Wire type 2 (length-delimited) - field 2
+  writer.uint32((2 << 3) | 2);
   writer.string('skip me');
-  // Another varint
+  
+  // Wire type 0 (varint) - field 3
+  writer.uint32((3 << 3) | 0);
   writer.uint32(200);
   
   const buffer = writer.finish();
   const reader = Reader.create(buffer);
   
-  reader.uint32(); // read first varint
+  // Read first tag
+  const tag1 = reader.uint32();
+  t.equal(tag1 >>> 3, 1, 'first field number should be 1');
   
-  // Skip the string by skipping the length varint and then the string data
-  const strLen = reader.uint32();
-  reader.skip(strLen);
+  // Read first value
+  const val1 = reader.uint32();
+  t.equal(val1, 100, 'first value should be 100');
   
-  const value = reader.uint32();
-  t.equal(value, 200, 'should read value after skip');
+  // Read second tag
+  const tag2 = reader.uint32();
+  t.equal(tag2 >>> 3, 2, 'second field number should be 2');
+  
+  // Skip the string using skipType for wire type 2
+  reader.skipType(tag2 & 7);
+  
+  // Read third tag
+  const tag3 = reader.uint32();
+  t.equal(tag3 >>> 3, 3, 'third field number should be 3');
+  
+  // Read third value
+  const val3 = reader.uint32();
+  t.equal(val3, 200, 'should read value after skipType');
+  
+  t.end();
+});
+
+tape.test('skipType() error handling for malformed varint', (t) => {
+  // Create a buffer with a malformed varint (all continuation bits set)
+  const malformedBuffer = Buffer.from([0xFF, 0xFF, 0xFF]);
+  const reader = Reader.create(malformedBuffer);
+  
+  try {
+    reader.skipType(0); // Try to skip wire type 0 (varint)
+    t.fail('Should have thrown error for malformed varint');
+  } catch (err) {
+    t.ok(err.message.includes('varint') || err.message.includes('Incomplete'), 'Should throw error for malformed varint');
+  }
   
   t.end();
 });

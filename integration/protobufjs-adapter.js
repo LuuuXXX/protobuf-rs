@@ -80,16 +80,27 @@ class Reader {
    */
   uint32() {
     if (isNative) {
-      const slice = this.buf.slice(this.pos);
-      const value = nativeModule.decodeVarint(slice);
-      // Calculate varint length to update position
-      let len = 1;
-      for (let i = 0; i < slice.length; i++) {
-        if ((slice[i] & 0x80) === 0) {
-          len = i + 1;
+      // Calculate varint length first to avoid inefficient slicing
+      let len = 0;
+      let startPos = this.pos;
+      while (startPos + len < this.len) {
+        if ((this.buf[startPos + len] & 0x80) === 0) {
+          len++;
           break;
         }
+        len++;
+        if (len > 10) {
+          throw new Error('Varint too long');
+        }
       }
+      
+      if (len === 0 || (this.buf[startPos + len - 1] & 0x80) !== 0) {
+        throw new Error('Incomplete varint');
+      }
+      
+      // Now decode with the calculated length
+      const slice = this.buf.slice(this.pos, this.pos + len);
+      const value = nativeModule.decodeVarint(slice);
       this.pos += len;
       return value >>> 0; // Ensure unsigned 32-bit
     } else {
@@ -352,6 +363,10 @@ class Reader {
       switch (wireType) {
         case 0: // Varint
           while (this.pos < this.len && (this.buf[this.pos++] & 0x80) !== 0);
+          // Check if we exited because we ran out of buffer with continuation bit still set
+          if (this.pos === this.len && this.pos > 0 && (this.buf[this.pos - 1] & 0x80) !== 0) {
+            throw new Error('Malformed varint: buffer ended before end of varint');
+          }
           return this;
         case 1: // 64-bit
           this.skip(8);
