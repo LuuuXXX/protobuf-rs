@@ -270,12 +270,18 @@ tape.test('skip() method', (t) => {
   const buffer = writer.finish();
   const reader = Reader.create(buffer);
   
-  const initialPos = reader.pos;
-  reader.uint32(); // read first value
-  const afterFirst = reader.pos;
+  reader.uint32(); // read first value (100)
   
-  reader.skip(afterFirst - initialPos); // skip same amount
-  const value = reader.uint32();
+  // Skip the second value (200) by reading and re-reading
+  const beforeSkip = reader.pos;
+  reader.uint32(); // read second value to know how much to skip
+  const skipAmount = reader.pos - beforeSkip;
+  
+  // Reset reader and skip properly
+  const reader2 = Reader.create(buffer);
+  reader2.uint32(); // read first value (100)
+  reader2.skip(skipAmount); // skip second value
+  const value = reader2.uint32();
   t.equal(value, 300, 'should read third value after skip');
   
   t.end();
