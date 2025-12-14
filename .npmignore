@@ -1,0 +1,41 @@
+# Source files
+src/
+target/
+Cargo.toml
+Cargo.lock
+build.rs
+
+# Development files
+.github/
+.git/
+.gitignore
+
+# Benchmarks and tests (users can get these from repo)
+benchmarks/
+test/
+test.js
+examples/
+
+# Documentation (include only essential docs)
+docs/INTEGRATION_GUIDE.md
+
+# Build artifacts
+*.node
+!npm/*/
+
+# Temporary files
+*.log
+*.swp
+*.swo
+*~
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# CI files
+.travis.yml
+.gitlab-ci.yml
+appveyor.yml

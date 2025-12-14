@@ -1,7 +1,7 @@
 {
-  "name": "protobuf-rs",
-  "version": "0.1.0",
-  "description": "Rust native module for protobuf.js using NAPI-RS",
+  "name": "@protobuf-rs/core",
+  "version": "1.0.0",
+  "description": "High-performance Protocol Buffers for Node.js - 3-15x faster than pure JavaScript, powered by Rust and NAPI-RS",
   "main": "index.js",
   "types": "index.d.ts",
   "napi": {
@@ -15,20 +15,56 @@
     "artifacts": "napi artifacts",
     "build": "napi build --platform --release",
     "build:debug": "napi build --platform",
-    "prepublishOnly": "napi prepublish -t npm",
+    "prepublishOnly": "npm run build && npm test",
     "test": "node test.js && node test/protobufjs-compatibility.js",
     "test:example": "node examples/protobufjs-migration.js",
+    "benchmark": "node benchmarks/real-world.js",
+    "benchmark:cpu": "node benchmarks/cpu-profile.js",
+    "benchmark:memory": "node --expose-gc benchmarks/memory-profile.js",
     "universal": "napi universal",
     "version": "napi version"
   },
   "keywords": [
     "protobuf",
+    "protocol-buffers",
+    "grpc",
     "rust",
     "napi-rs",
-    "native"
+    "napi",
+    "native",
+    "performance",
+    "fast",
+    "high-performance",
+    "serialization",
+    "encoding",
+    "decoding",
+    "varint",
+    "simd",
+    "zero-copy"
   ],
   "author": "LuuuXXX",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LuuuXXX/protobuf-rs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LuuuXXX/protobuf-rs/issues"
+  },
+  "homepage": "https://github.com/LuuuXXX/protobuf-rs#readme",
+  "files": [
+    "*.node",
+    "index.js",
+    "index.d.ts",
+    "integration/",
+    "docs/PERFORMANCE_REPORT.md",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=12.0.0"
+  },
   "devDependencies": {
     "@napi-rs/cli": "^3.5.0",
     "protobufjs": "^7.2.5",

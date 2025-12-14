@@ -7,8 +7,11 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-napi = "2"
-napi-derive = "2"
+napi = "2.16"
+napi-derive = "2.16"
+byteorder = "1.5"
+rayon = "1.8"
+parking_lot = "0.12"
 
 [build-dependencies]
 napi-build = "2"
