@@ -53,8 +53,8 @@ pub fn decode_varint(buffer: Buffer) -> Result<i64> {
             return Err(Error::from_reason("Varint too long"));
         }
 
-        // On the 10th byte, only 1 bit should be set to avoid overflow
-        if i == 9 && byte > 1 {
+        // On the 10th byte (index 9), only 1 bit should be set to avoid overflow
+        if i == MAX_VARINT_BYTES - 1 && byte > 1 {
             return Err(Error::from_reason("Varint overflow"));
         }
 

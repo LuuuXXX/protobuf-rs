@@ -144,16 +144,18 @@ try {
 // Test varint overflow
 console.log('\nTest 15: Varint overflow');
 try {
-    // 11 bytes would be too long
-    decodeVarint(Buffer.from([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01]));
+    // Varint with 11 bytes - exceeds maximum length
+    const elevenBytes = Buffer.from([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01]);
+    decodeVarint(elevenBytes);
     console.error('Should have thrown error for varint too long');
 } catch (e) {
     console.log('Correctly rejected varint that is too long');
 }
 
 try {
-    // 10th byte with value > 1 causes overflow
-    decodeVarint(Buffer.from([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x02]));
+    // 10th byte with value > 1 causes overflow for 64-bit number
+    const overflowBytes = Buffer.from([0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x02]);
+    decodeVarint(overflowBytes);
     console.error('Should have thrown error for varint overflow');
 } catch (e) {
     console.log('Correctly rejected varint overflow');
