@@ -306,7 +306,23 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { decodeVarint, encodeVarint, decodeZigzag, encodeZigzag, decodeFieldTag, encodeFieldTag, ProtobufParser } = nativeBinding
+const { 
+    decodeVarint, 
+    encodeVarint, 
+    decodeZigzag, 
+    encodeZigzag, 
+    decodeFieldTag, 
+    encodeFieldTag, 
+    ProtobufParser,
+    // Phase 3 exports
+    encodeVarintBatchSimd,
+    decodeVarintBatchSimd,
+    Reader,
+    Writer,
+    encodeVarintsParallel,
+    decodeVarintsParallel,
+    processU32BatchParallel
+} = nativeBinding
 
 module.exports.decodeVarint = decodeVarint
 module.exports.encodeVarint = encodeVarint
@@ -315,3 +331,12 @@ module.exports.encodeZigzag = encodeZigzag
 module.exports.decodeFieldTag = decodeFieldTag
 module.exports.encodeFieldTag = encodeFieldTag
 module.exports.ProtobufParser = ProtobufParser
+
+// Phase 3 exports
+module.exports.encodeVarintBatchSimd = encodeVarintBatchSimd
+module.exports.decodeVarintBatchSimd = decodeVarintBatchSimd
+module.exports.Reader = Reader
+module.exports.Writer = Writer
+module.exports.encodeVarintsParallel = encodeVarintsParallel
+module.exports.decodeVarintsParallel = decodeVarintsParallel
+module.exports.processU32BatchParallel = processU32BatchParallel
