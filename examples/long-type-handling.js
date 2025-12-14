@@ -79,8 +79,6 @@ const signedValues = [
 ];
 
 console.log('sint64 编码/解码（ZigZag）| sint64 encoding/decoding (ZigZag):');
-
-console.log('sint64 编码/解码（ZigZag）| sint64 encoding/decoding (ZigZag):');
 signedValues.forEach(value => {
   const writer = Writer.create();
   writer.sint64(value);
