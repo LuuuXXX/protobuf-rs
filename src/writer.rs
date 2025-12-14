@@ -154,9 +154,13 @@ impl Writer {
     /// # 返回 / Returns
     /// 包含所有已写入数据的缓冲区 / Buffer containing all written data
     /// 
-    /// # 注意 / Note
-    /// 此方法会克隆缓冲区。如果需要复用写入器，之后调用 reset()。
-    /// This method clones the buffer. Call reset() afterwards if you want to reuse the writer.
+    /// # 所有权说明 / Ownership Notes
+    /// 此方法使用 `&self`（非 `self`），因此写入器在调用后仍然可用。
+    /// This method uses `&self` (not `self`), so the writer remains usable after calling.
+    /// 当前实现会克隆缓冲区以维护 NAPI 所有权语义。
+    /// Currently clones the buffer to maintain NAPI ownership semantics.
+    /// 如果需要复用写入器，之后调用 reset()。
+    /// Call reset() afterwards if you want to reuse the writer.
     #[napi]
     pub fn finish(&self) -> Buffer {
         self.buffer.clone().into()

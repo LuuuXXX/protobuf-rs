@@ -66,8 +66,10 @@ pub struct Writer {
 }
 
 impl Writer {
-    pub fn finish(self) -> Vec<u8> {
-        self.buffer  // 移动所有权，无复制
+    pub fn finish(&self) -> Vec<u8> {
+        // 注意：当前实现会克隆以维护 NAPI 所有权语义
+        // Note: Currently clones to maintain NAPI ownership semantics
+        self.buffer.clone()
     }
     
     pub fn reset(&mut self) {
@@ -276,16 +278,12 @@ function encodeVarint(value) {
 **protobuf-rs**：
 
 ```rust
-// 编译时代码生成（build.rs）
-// 在 Cargo 编译期间执行
-fn main() {
-    // 读取 .proto 文件
-    // 生成 Rust 代码
-    // 编译为机器码
-}
+// 编译时准备（NAPI-RS 绑定生成）
+// 在 Cargo 编译期间，NAPI-RS 自动生成 JavaScript 绑定
+// 运行时直接使用编译好的原生模块
 
 // 优势：
-// - 启动时无代码生成开销
+// - 启动时无绑定生成开销
 // - 类型安全
 // - 完全优化的机器码
 ```
@@ -504,17 +502,22 @@ Writer.prototype.uint32 = function(value) {
 
 2. **SIMD 支持**：
    ```rust
-   use std::simd::*;
+   // 注意：硬件 SIMD 支持计划在 v1.1 实现
+   // Note: Hardware SIMD support planned for v1.1
    
-   pub fn encode_batch_simd(values: &[u32]) -> Vec<u8> {
-       // 使用 SIMD 一次处理 4/8 个值
-       values.chunks_exact(4)
-           .flat_map(|chunk| {
-               let v = u32x4::from_slice(chunk);
-               encode_simd(v)
-           })
+   // 当前使用优化的批处理实现
+   pub fn encode_batch_optimized(values: &[u32]) -> Vec<u8> {
+       // 批量处理，减少函数调用开销
+       values.iter()
+           .flat_map(|&v| encode_u32(v))
            .collect()
    }
+   
+   // 未来 SIMD 实现（v1.1 计划）：
+   // Future SIMD implementation (planned for v1.1):
+   // use std::simd::*;
+   // 使用 SIMD 一次处理 4/8 个值
+   // Process 4/8 values at once using SIMD
    ```
    
    ```javascript
@@ -593,7 +596,10 @@ Writer.prototype.uint32 = function(value) {
 | **JavaScript 代码** | 50 KB | 400 KB |
 | **总大小** | 850 KB | 400 KB |
 
-注意：protobuf-rs 包含完整的 Rust 运行时和优化代码，但性能更高。
+**说明**：
+- protobuf-rs 包含完整的 Rust 运行时和优化代码，因此二进制较大
+- 但运行时性能更高（3-15 倍），内存效率更好（-42%）
+- 对于高性能应用，这是值得的权衡
 
 ## 性能测试数据
 
@@ -777,7 +783,7 @@ Error: Varint overflow
 | 方面 | protobuf-rs | protobuf.js |
 |------|-------------|-------------|
 | **发布时间** | 2024 | 2016 |
-| **GitHub Stars** | ~100 | ~9.5K |
+| **社区规模** | 新兴项目 | 成熟生态 |
 | **npm 下载** | 新项目 | 200K+/周 |
 | **社区支持** | 小众 | 成熟 |
 | **第三方集成** | 有限 | 丰富 |
