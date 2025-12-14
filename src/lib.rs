@@ -1,6 +1,9 @@
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
+const MAX_VARINT_BYTES: usize = 9;
+const MAX_WIRE_TYPE: i64 = 5;
+
 #[napi]
 pub struct ProtobufParser {
     data: Vec<u8>,
@@ -43,7 +46,7 @@ pub fn decode_varint(buffer: Buffer) -> Result<i64> {
     let mut shift = 0;
 
     for (i, &byte) in bytes.iter().enumerate() {
-        if i > 9 {
+        if i > MAX_VARINT_BYTES {
             return Err(Error::from_reason("Varint too long"));
         }
 
@@ -109,7 +112,7 @@ pub fn decode_field_tag(buffer: Buffer) -> Result<Vec<i64>> {
 
 #[napi]
 pub fn encode_field_tag(field_number: i64, wire_type: i64) -> Result<Buffer> {
-    if field_number < 0 || !(0..=5).contains(&wire_type) {
+    if field_number < 0 || !(0..=MAX_WIRE_TYPE).contains(&wire_type) {
         return Err(Error::from_reason("Invalid field number or wire type"));
     }
 
