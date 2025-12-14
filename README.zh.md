@@ -386,12 +386,22 @@ protobuf.Writer = Writer;
 
 ## 📖 文档
 
+- [架构文档](docs/zh_CN/architecture.md) - 系统架构和设计详解
+- [差异性分析](docs/zh_CN/comparison.md) - 与 protobuf.js 的详细对比
 - [性能报告](docs/zh_CN/PERFORMANCE_REPORT.md) - 详细的性能分析和基准测试
 - [集成指南](docs/zh_CN/INTEGRATION_GUIDE.md) - 完整的集成文档
 - [兼容性报告](docs/zh_CN/COMPATIBILITY_REPORT.md) - protobuf.js 兼容性详情
 - [API 文档](docs/zh_CN/API.md) - 完整的 API 参考
 - [常见问题](docs/zh_CN/FAQ.md) - 常见问题解答
+- [文档索引](docs/zh_CN/README.md) - 中文文档导航
 - [CHANGELOG](CHANGELOG.md) - 版本历史和迁移指南
+
+### 架构图
+
+- [protobuf-rs 架构图](docs/diagrams/protobuf-rs-arch.mmd) - 整体系统架构
+- [对比架构图](docs/diagrams/comparison-arch.mmd) - 与 protobuf.js 的架构对比
+- [数据流程图](docs/diagrams/data-flow.mmd) - 从 .proto 到使用的数据处理流程
+- [核心组件图](docs/diagrams/core-components.mmd) - 核心组件架构
 
 ## 🔧 从源代码构建
 

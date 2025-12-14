@@ -438,6 +438,8 @@ Check out the [examples/](examples/) directory for comprehensive examples:
 
 ### English Documentation
 
+- [Architecture Documentation](docs/zh_CN/architecture.md) - System architecture and design (Chinese)
+- [Comparison Analysis](docs/zh_CN/comparison.md) - Detailed comparison with protobuf.js (Chinese)
 - [Performance Report](docs/PERFORMANCE_REPORT.md) - Detailed performance analysis and benchmarks
 - [Integration Guide](docs/INTEGRATION_GUIDE.md) - Complete integration documentation
 - [Compatibility Report](docs/COMPATIBILITY_REPORT.md) - protobuf.js compatibility details
@@ -446,11 +448,18 @@ Check out the [examples/](examples/) directory for comprehensive examples:
 ### 中文文档 (Chinese Documentation)
 
 - [中文 README](README.zh.md) - 完整的中文说明文档
+- [架构文档](docs/zh_CN/architecture.md) - 系统架构和设计详解
+- [差异性分析](docs/zh_CN/comparison.md) - 与 protobuf.js 的详细对比
 - [API 文档](docs/zh_CN/API.md) - 详细的 API 参考
 - [常见问题 FAQ](docs/zh_CN/FAQ.md) - 常见问题解答
-- [性能报告](docs/zh_CN/PERFORMANCE_REPORT.md) - 性能分析和基准测试（即将推出）
-- [集成指南](docs/zh_CN/INTEGRATION_GUIDE.md) - 完整的集成文档（即将推出）
-- [兼容性报告](docs/zh_CN/COMPATIBILITY_REPORT.md) - protobuf.js 兼容性详情（即将推出）
+- [文档索引](docs/zh_CN/README.md) - 中文文档导航
+
+### Architecture Diagrams
+
+- [protobuf-rs Architecture](docs/diagrams/protobuf-rs-arch.mmd) - Overall system architecture
+- [Comparison Architecture](docs/diagrams/comparison-arch.mmd) - Architecture comparison with protobuf.js
+- [Data Flow](docs/diagrams/data-flow.mmd) - Data processing flow from .proto to usage
+- [Core Components](docs/diagrams/core-components.mmd) - Core component architecture
 
 ## 🔧 Building from Source
 
