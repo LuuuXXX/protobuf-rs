@@ -44,8 +44,14 @@ function decodeVarintJS(buffer) {
   let result = 0;
   let shift = 0;
   
-  for (let i = 0; i < buffer.length; i++) {
+  for (let i = 0; i < buffer.length && i < 10; i++) { // Limit to 10 bytes for safety
     const byte = buffer[i];
+    
+    // Check for overflow (shift > 28 for 32-bit)
+    if (shift >= 32) {
+      throw new Error('Varint overflow');
+    }
+    
     result |= (byte & 0x7F) << shift;
     
     if ((byte & 0x80) === 0) {

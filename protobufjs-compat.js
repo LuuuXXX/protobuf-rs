@@ -95,10 +95,20 @@ exported.isNativeAccelerated = function() {
 
 // Add function to get implementation info
 exported.getImplementationInfo = function() {
+  const path = require('path');
+  let version = '1.0.0';
+  try {
+    // Try to read package.json from module root
+    const pkgPath = path.join(__dirname, 'package.json');
+    version = require(pkgPath).version;
+  } catch (e) {
+    // Fallback to hardcoded version if package.json not found
+  }
+  
   return {
     native: nativeAdapter !== null && nativeAdapter.isNativeAvailable(),
     type: nativeAdapter ? nativeAdapter.getImplementationType() : 'javascript',
-    version: require('./package.json').version,
+    version: version,
     protobufjs: protobufjs.util.newBuffer ? 'light' : 'full'
   };
 };

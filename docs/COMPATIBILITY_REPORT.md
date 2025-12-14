@@ -1,5 +1,6 @@
 # protobuf.js Compatibility Report
 
+<!-- Note: Update date and version when regenerating this report -->
 **Generated:** December 14, 2024  
 **protobuf.js Version:** 7.2.5  
 **protobuf-rs Version:** 1.0.0

@@ -1,5 +1,6 @@
 # Benchmark Results: protobuf-rs
 
+<!-- Note: Update date and version when regenerating this report -->
 **Version:** 1.0.0  
 **Date:** December 14, 2024  
 **Test Type:** Comprehensive Performance Analysis

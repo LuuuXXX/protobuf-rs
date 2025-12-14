@@ -107,6 +107,7 @@ tape.test('Compatibility with protobuf.js load/loadSync', (t) => {
   const protobuf = require('../protobufjs-compat');
   const fs = require('fs');
   const path = require('path');
+  const os = require('os');
   
   // Create a temporary .proto file
   const protoContent = `
@@ -118,7 +119,7 @@ message TestMessage {
 }
 `;
   
-  const protoPath = path.join('/tmp', 'test.proto');
+  const protoPath = path.join(os.tmpdir(), 'test.proto');
   fs.writeFileSync(protoPath, protoContent);
   
   // Test loadSync
