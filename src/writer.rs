@@ -1,25 +1,60 @@
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
+/// Protocol Buffer 缓冲写入器
 /// Writer for protobuf wire format with buffer optimization
 /// 
-/// Note: The finish() method currently clones the buffer to maintain ownership
-/// semantics with NAPI. Alternative APIs (finish_into, consume) will be explored
-/// in future releases for true zero-copy operation.
+/// # 设计说明 / Design Notes
+/// 写入器使用动态增长的缓冲区来收集编码数据。
+/// The writer uses a dynamically growing buffer to collect encoded data.
+/// 
+/// # 性能优化 / Performance Optimizations
+/// - 预分配容量：减少内存重新分配
+///   Pre-allocated capacity: Reduces memory reallocations
+/// - 缓冲区复用：reset() 后可复用，避免重复分配
+///   Buffer reuse: Can reuse after reset(), avoiding repeated allocations
+/// - 批量写入：使用 extend_from_slice 批量复制
+///   Batch writes: Uses extend_from_slice for bulk copying
+/// - 编译器内联：小函数自动内联
+///   Compiler inlining: Small functions are automatically inlined
+/// 
+/// # 注意 / Note
+/// finish() 方法当前会克隆缓冲区以保持 NAPI 的所有权语义。
+/// The finish() method currently clones the buffer to maintain ownership
+/// semantics with NAPI.
+/// 未来版本将探索替代 API（finish_into、consume）以实现真正的零拷贝操作。
+/// Alternative APIs (finish_into, consume) will be explored in future releases
+/// for true zero-copy operation.
 #[napi]
 pub struct Writer {
+    /// 内部缓冲区 / Internal buffer
     buffer: Vec<u8>,
 }
 
 #[napi]
 impl Writer {
+    /// 创建新的写入器
     /// Create a new Writer
     #[napi(constructor)]
     pub fn new() -> Self {
         Writer { buffer: Vec::new() }
     }
 
+    /// 创建具有预分配容量的写入器
     /// Create a new Writer with pre-allocated capacity
+    /// 
+    /// # 性能提示 / Performance Tip
+    /// 如果知道大致的消息大小，预分配容量可以减少重新分配。
+    /// If you know the approximate message size, pre-allocating capacity
+    /// can reduce reallocations.
+    /// 
+    /// # 参数 / Arguments
+    /// * `capacity` - 初始容量（字节数）/ Initial capacity in bytes
+    /// 
+    /// # 示例 / Example
+    /// ```
+    /// let writer = Writer::with_capacity(1024);  // 预分配 1KB
+    /// ```
     #[napi(factory)]
     pub fn with_capacity(capacity: u32) -> Self {
         Writer {
@@ -27,14 +62,33 @@ impl Writer {
         }
     }
 
+    /// 写入一个 u32 作为 varint
     /// Write a u32 as varint
+    /// 
+    /// # 编码格式 / Encoding Format
+    /// 使用 Protocol Buffers varint 编码，小值使用更少字节。
+    /// Uses Protocol Buffers varint encoding, smaller values use fewer bytes.
+    /// 
+    /// # 性能说明 / Performance Notes
+    /// - 0-127: 1 字节
+    /// - 128-16383: 2 字节
+    /// - 16384-2097151: 3 字节
+    /// - 2097152-268435455: 4 字节
+    /// - 268435456-4294967295: 5 字节
+    /// 
+    /// # 参数 / Arguments
+    /// * `value` - 要写入的 32 位无符号整数 / 32-bit unsigned integer to write
     #[napi]
     pub fn uint32(&mut self, value: u32) {
         let mut n = value;
         loop {
+            // 提取低 7 位
+            // Extract lower 7 bits
             let mut byte = (n & 0x7F) as u8;
             n >>= 7;
 
+            // 如果还有更多位，设置继续位
+            // If there are more bits, set continuation bit
             if n != 0 {
                 byte |= 0x80;
             }
@@ -47,46 +101,112 @@ impl Writer {
         }
     }
 
+    /// 写入带长度前缀的字节数组
     /// Write bytes with length prefix
+    /// 
+    /// # 格式 / Format
+    /// [length: varint][data: bytes]
+    /// 
+    /// # 用途 / Use Cases
+    /// - 嵌套消息 / Embedded messages
+    /// - 字节数组字段 / Byte array fields
+    /// - 打包的重复字段 / Packed repeated fields
+    /// 
+    /// # 参数 / Arguments
+    /// * `value` - 要写入的字节缓冲区 / Byte buffer to write
     #[napi]
     pub fn bytes(&mut self, value: Buffer) {
         let bytes = value.as_ref();
+        // 先写入长度
+        // Write length first
         self.uint32(bytes.len() as u32);
+        // 再写入数据
+        // Then write data
         self.buffer.extend_from_slice(bytes);
     }
 
+    /// 写入带长度前缀的 UTF-8 字符串
     /// Write string with length prefix
+    /// 
+    /// # 格式 / Format
+    /// [length: varint][utf8_data: bytes]
+    /// 
+    /// # 编码 / Encoding
+    /// 字符串自动编码为 UTF-8 字节序列
+    /// Strings are automatically encoded as UTF-8 byte sequences
+    /// 
+    /// # 参数 / Arguments
+    /// * `value` - 要写入的字符串 / String to write
     #[napi]
     pub fn string(&mut self, value: String) {
         let bytes = value.as_bytes();
+        // 先写入字节长度
+        // Write byte length first
         self.uint32(bytes.len() as u32);
+        // 再写入 UTF-8 数据
+        // Then write UTF-8 data
         self.buffer.extend_from_slice(bytes);
     }
 
+    /// 完成写入并获取缓冲区
     /// Get the finished buffer
+    /// 
+    /// # 返回 / Returns
+    /// 包含所有已写入数据的缓冲区 / Buffer containing all written data
+    /// 
+    /// # 所有权说明 / Ownership Notes
+    /// 此方法使用 `&self`（非 `self`），因此写入器在调用后仍然可用。
+    /// This method uses `&self` (not `self`), so the writer remains usable after calling.
+    /// 当前实现会克隆缓冲区以维护 NAPI 所有权语义。
+    /// Currently clones the buffer to maintain NAPI ownership semantics.
+    /// 如果需要复用写入器，之后调用 reset()。
+    /// Call reset() afterwards if you want to reuse the writer.
     #[napi]
     pub fn finish(&self) -> Buffer {
         self.buffer.clone().into()
     }
 
+    /// 获取当前缓冲区大小（已写入字节数）
     /// Get estimated buffer size (current size)
+    /// 
+    /// # 用途 / Use Cases
+    /// 用于监控写入进度或预估最终大小
+    /// Used for monitoring write progress or estimating final size
     #[napi]
     pub fn estimated_size(&self) -> u32 {
         self.buffer.len() as u32
     }
 
+    /// 重置写入器以供复用
     /// Reset the writer for reuse
+    /// 
+    /// # 性能说明 / Performance Notes
+    /// 清空缓冲区但保留已分配的容量，避免重新分配。
+    /// Clears the buffer but keeps allocated capacity, avoiding reallocation.
+    /// 
+    /// # 示例 / Example
+    /// ```
+    /// let mut writer = Writer::with_capacity(1024);
+    /// writer.uint32(100);
+    /// let buffer1 = writer.finish();
+    /// 
+    /// writer.reset();  // 复用，无需重新分配
+    /// writer.uint32(200);
+    /// let buffer2 = writer.finish();
+    /// ```
     #[napi]
     pub fn reset(&mut self) {
         self.buffer.clear();
     }
 
+    /// 获取当前已写入的字节数
     /// Get current length
     #[napi]
     pub fn len(&self) -> u32 {
         self.buffer.len() as u32
     }
 
+    /// 检查缓冲区是否为空
     /// Check if empty
     #[napi]
     pub fn is_empty(&self) -> bool {

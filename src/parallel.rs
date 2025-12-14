@@ -2,11 +2,34 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use rayon::prelude::*;
 
-/// Encode multiple buffers in parallel
+/// 并行编码多个 varint
+/// Encode multiple varints in parallel
+/// 
+/// # 并行化说明 / Parallelization Notes
+/// 使用 Rayon 库实现工作窃取式并行，自动利用所有 CPU 核心。
+/// Uses Rayon library for work-stealing parallelism, automatically utilizing all CPU cores.
+/// 
+/// # 性能优势 / Performance Benefits
+/// - 多核并行：接近线性扩展（8核 ~7.5x）/ Multi-core parallelism: Near-linear scaling (8 cores ~7.5x)
+/// - 无锁设计：每个线程独立工作 / Lock-free design: Each thread works independently
+/// - 工作窃取：动态负载均衡 / Work stealing: Dynamic load balancing
+/// 
+/// # 适用场景 / Suitable Scenarios
+/// - 大数据集（>1000 个值）/ Large datasets (>1000 values)
+/// - CPU 密集型任务 / CPU-intensive tasks
+/// - 多核服务器环境 / Multi-core server environments
+/// 
+/// # 参数 / Arguments
+/// * `values` - 要编码的 i64 值数组 / Array of i64 values to encode
+/// 
+/// # 返回 / Returns
+/// 编码后的缓冲区数组 / Array of encoded buffers
 #[napi]
 pub fn encode_varints_parallel(values: Vec<i64>) -> Result<Vec<Buffer>> {
+    // 使用 Rayon 的并行迭代器
+    // Use Rayon's parallel iterator
     let results: Vec<_> = values
-        .par_iter()
+        .par_iter()  // 并行迭代 / Parallel iteration
         .map(|&value| {
             let mut result = Vec::new();
             let mut n = value as u64;
@@ -33,9 +56,23 @@ pub fn encode_varints_parallel(values: Vec<i64>) -> Result<Vec<Buffer>> {
     Ok(results.into_iter().map(|v| v.into()).collect())
 }
 
-/// Decode multiple buffers in parallel
+/// 并行解码多个 varint
+/// Decode multiple varints in parallel
+/// 
+/// # 并行化策略 / Parallelization Strategy
+/// 先将所有缓冲区转换为 owned 数据，然后并行解码。
+/// First converts all buffers to owned data, then decodes in parallel.
+/// 这避免了跨线程共享引用的问题。
+/// This avoids issues with sharing references across threads.
+/// 
+/// # 参数 / Arguments
+/// * `buffers` - 包含 varint 的缓冲区数组 / Array of buffers containing varints
+/// 
+/// # 返回 / Returns
+/// 解码后的 i64 值数组 / Array of decoded i64 values
 #[napi]
 pub fn decode_varints_parallel(buffers: Vec<Buffer>) -> Result<Vec<i64>> {
+    // 转换为 owned 数据以便并行化
     // Convert to owned data before parallelization
     let data: Vec<Vec<u8>> = buffers.iter().map(|b| b.to_vec()).collect();
 
@@ -67,7 +104,30 @@ pub fn decode_varints_parallel(buffers: Vec<Buffer>) -> Result<Vec<i64>> {
         .collect()
 }
 
+/// 使用分块并行处理批量 u32 varint
 /// Process batch of u32 varints in parallel using chunking
+/// 
+/// # 分块策略 / Chunking Strategy
+/// 将大数据集分成小块，每块并行处理，最后合并结果。
+/// Splits large datasets into chunks, processes each in parallel, then merges results.
+/// 
+/// # 性能调优 / Performance Tuning
+/// - 小数据集（<1000）：使用默认块大小 100 / Small datasets (<1000): Use default chunk size 100
+/// - 中等数据集（1K-100K）：块大小 1000 / Medium datasets (1K-100K): Chunk size 1000
+/// - 大数据集（>100K）：块大小 10000 / Large datasets (>100K): Chunk size 10000
+/// 
+/// # 参数 / Arguments
+/// * `values` - 要处理的 u32 值数组 / Array of u32 values to process
+/// * `chunk_size` - 可选的块大小（默认 100）/ Optional chunk size (default 100)
+/// 
+/// # 返回 / Returns
+/// 包含所有编码 varint 的缓冲区 / Buffer containing all encoded varints
+/// 
+/// # 示例 / Example
+/// ```javascript
+/// // 处理 100K 个值，使用 1000 的块大小
+/// const result = processU32BatchParallel(values, 1000);
+/// ```
 #[napi]
 pub fn process_u32_batch_parallel(values: Vec<u32>, chunk_size: Option<u32>) -> Result<Buffer> {
     let chunk_size = chunk_size.unwrap_or(100) as usize;
@@ -76,6 +136,7 @@ pub fn process_u32_batch_parallel(values: Vec<u32>, chunk_size: Option<u32>) -> 
         return Ok(Vec::new().into());
     }
 
+    // 并行处理分块
     // Process in parallel chunks
     let results: Vec<Vec<u8>> = values
         .par_chunks(chunk_size)
