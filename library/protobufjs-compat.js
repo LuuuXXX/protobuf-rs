@@ -98,8 +98,8 @@ exported.getImplementationInfo = function() {
   const path = require('path');
   let version = '1.0.0';
   try {
-    // Try to read package.json from module root
-    const pkgPath = path.join(__dirname, 'package.json');
+    // Try to read package.json from module root (one level up from library/)
+    const pkgPath = path.join(__dirname, '..', 'package.json');
     version = require(pkgPath).version;
   } catch (e) {
     // Fallback to hardcoded version if package.json not found

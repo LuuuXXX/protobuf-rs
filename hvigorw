@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # HarmonyOS hvigor wrapper script for Unix/Linux/macOS
 # This script will execute the hvigor build tool
