@@ -14,7 +14,7 @@ const VERBOSE = process.env.PROTOBUF_RS_VERBOSE === 'true';
 
 // Try to load native Rust module
 try {
-  nativeModule = require('../index');
+  nativeModule = require('../library/index');
   isNative = true;
   if (VERBOSE) {
     console.log('✓ protobuf-rs: Using native Rust implementation');

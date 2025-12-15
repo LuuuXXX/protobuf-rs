@@ -27,7 +27,7 @@ try {
 
 // Try to load our Rust-accelerated adapter
 try {
-  nativeAdapter = require('./integration/protobufjs-adapter');
+  nativeAdapter = require('../integration/protobufjs-adapter');
 } catch (err) {
   // Fallback to pure protobuf.js if native module is unavailable
   console.warn('⚠ protobuf-rs: Native module not available, using pure protobuf.js');
