@@ -1,3 +1,7 @@
+// Copyright (c) 2024 LuuuXXX
+// Licensed under the BSD-3-Clause License.
+// See LICENSE file in the project root for full license information.
+
 /**
  * Long 类型处理示例
  * Long Type Handling Example

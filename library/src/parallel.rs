@@ -1,3 +1,7 @@
+// Copyright (c) 2024 LuuuXXX
+// Licensed under the BSD-3-Clause License.
+// See LICENSE file in the project root for full license information.
+
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use rayon::prelude::*;

@@ -1,3 +1,7 @@
+// Copyright (c) 2024 LuuuXXX
+// Licensed under the BSD-3-Clause License.
+// See LICENSE file in the project root for full license information.
+
 const { existsSync, readFileSync } = require('fs')
 const { join } = require('path')
 
@@ -7,6 +11,9 @@ let nativeBinding = null
 let localFileExisted = false
 let loadError = null
 
+// Detect if the system is using musl libc (e.g., Alpine Linux)
+// musl is a lightweight C standard library commonly used in containerized environments
+// This is standard NAPI-RS template code for platform detection
 function isMusl() {
   // For Node 10
   if (!process.report || typeof process.report.getReport !== 'function') {
