@@ -119,7 +119,7 @@ export function encodeFieldTag(fieldNumber: number, wireType: number): Buffer;
  * const [fieldNumber, wireType] = decodeFieldTag(buffer);
  * ```
  */
-export function decodeFieldTag(buffer: Buffer): number[];
+export function decodeFieldTag(buffer: Buffer): [number, number];
 
 // =============================================================================
 // ProtobufParser Class
