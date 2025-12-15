@@ -178,14 +178,6 @@ export class Reader {
   constructor(buffer: Buffer);
 
   /**
-   * Create a new Reader instance (factory method)
-   * 
-   * @param buffer - The buffer to read from
-   * @returns New Reader instance
-   */
-  static create(buffer: Buffer): Reader;
-
-  /**
    * Get current position in the buffer
    * 
    * @returns Current position
@@ -380,13 +372,6 @@ export class Writer {
   constructor();
 
   /**
-   * Create a new Writer instance (factory method)
-   * 
-   * @returns New Writer instance
-   */
-  static create(): Writer;
-
-  /**
    * Create a Writer with pre-allocated capacity
    * 
    * Pre-allocating capacity can reduce memory reallocations for better performance.
@@ -396,7 +381,7 @@ export class Writer {
    * 
    * @example
    * ```typescript
-   * const writer = Writer.withCapacity(1024);  // Pre-allocate 1KB
+ * const writer = Writer.withCapacity(1024);  // Pre-allocate 1KB
    * ```
    */
   static withCapacity(capacity: number): Writer;
