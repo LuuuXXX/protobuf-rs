@@ -6,7 +6,7 @@
  */
 
 const tape = require('tape');
-const { Reader, Writer, isNativeAvailable } = require('../integration/protobufjs-adapter');
+const { Reader, Writer, isNativeAvailable } = require('../../integration/protobufjs-adapter');
 
 console.log('\n🧪 Running protobuf.js compatibility tests...\n');
 

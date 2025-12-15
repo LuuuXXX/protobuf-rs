@@ -1,0 +1,9 @@
+{
+  "name": "protobuf-rs",
+  "version": "1.0.0",
+  "description": "Protocol Buffers implementation with Rust backend",
+  "main": "library/index.js",
+  "author": "",
+  "license": "BSD-3-Clause",
+  "dependencies": {}
+}

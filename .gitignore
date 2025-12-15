@@ -13,3 +13,9 @@ yarn-error.log*
 *.iml
 .cargo/
 Cargo.lock
+
+# HarmonyOS build artifacts
+/build/
+oh_modules/
+.hvigor/
+
