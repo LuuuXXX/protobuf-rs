@@ -5,11 +5,56 @@
 [![CI](https://github.com/LuuuXXX/protobuf-rs/workflows/CI/badge.svg)](https://github.com/LuuuXXX/protobuf-rs/actions)
 [![Performance](https://img.shields.io/badge/Performance-3.14x_faster-brightgreen)](docs/BENCHMARK_RESULTS.md)
 [![Memory](https://img.shields.io/badge/Memory--42%25_reduction-blue)](docs/BENCHMARK_RESULTS.md)
-[![Compatibility](https://img.shields.io/badge/Compatibility-100%25-brightgreen)](test/protobufjs-compatibility.js)
+[![Compatibility](https://img.shields.io/badge/Compatibility-100%25-brightgreen)](library/test/protobufjs-compatibility.js)
+[![HarmonyOS](https://img.shields.io/badge/HarmonyOS-Ready-orange)](docs/HARMONYOS.md)
 
 A **high-performance Protocol Buffers implementation for Node.js** powered by Rust and NAPI-RS.
 
 **[English](README.md)** | **[简体中文](README.zh.md)**
+
+## 📁 Project Structure (v1.0.0)
+
+This project has been restructured to support **HarmonyOS** while maintaining Node.js compatibility:
+
+```
+protobuf-rs/
+├── library/              # Core library (moved from root)
+│   ├── src/             # Rust source code
+│   ├── test/            # Test files
+│   ├── index.js         # JavaScript entry point
+│   ├── index.d.ts       # TypeScript definitions
+│   ├── protobufjs-compat.js  # Compatibility layer
+│   ├── Cargo.toml       # Rust package configuration
+│   └── build.rs         # Build script
+├── entry/               # HarmonyOS entry module
+│   └── src/
+│       └── main.ets     # HarmonyOS entry point
+├── AppScope/            # HarmonyOS app configuration
+│   └── app.json5
+├── examples/            # Example code
+├── docs/                # Documentation
+├── integration/         # Integration tests
+├── scripts/             # Build and utility scripts
+├── build-profile.json5  # HarmonyOS build profile
+├── oh-package.json5     # HarmonyOS package config
+├── hvigorfile.ts        # HarmonyOS build tool config
+├── hvigorw / hvigorw.bat  # Build wrapper scripts
+├── package.json         # Node.js package config (points to library/)
+├── Cargo.toml           # Rust workspace config
+└── README.md
+```
+
+### Breaking Changes in v1.0.0
+
+The restructuring is **transparent** for npm users - the package still works the same:
+
+```javascript
+// Still works exactly as before
+const protobuf = require('@protobuf-rs/core');
+const { Reader, Writer } = require('@protobuf-rs/core/protobufjs-compat');
+```
+
+The package.json `main` field points to `library/index.js`, so all imports work unchanged.
 
 ## 🚀 Performance
 

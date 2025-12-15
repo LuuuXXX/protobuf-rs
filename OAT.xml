@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- OpenAtom OAT configuration file for protobuf-rs -->
+<configuration>
+    <oatconfig>
+        <licensefile></licensefile>
+        <policylist>
+            <policy name="projectPolicy" desc="">
+                <policyitem type="copyright" name="BSD-3-Clause" path=".*" desc="protobuf-rs uses BSD-3-Clause license"/>
+                <policyitem type="license" name="BSD-3-Clause" path=".*" desc="protobuf-rs uses BSD-3-Clause license"/>
+            </policy>
+        </policylist>
+        <filefilterlist>
+            <filefilter name="defaultFilter" desc="Files not to check">
+                <filteritem type="filepath" name="node_modules/.*" desc="Third-party dependencies"/>
+                <filteritem type="filepath" name="target/.*" desc="Build artifacts"/>
+                <filteritem type="filepath" name="build/.*" desc="Build artifacts"/>
+                <filteritem type="filepath" name="oh_modules/.*" desc="HarmonyOS modules"/>
+                <filteritem type="filepath" name=".hvigor/.*" desc="HarmonyOS build cache"/>
+                <filteritem type="filepath" name="*.node" desc="Native binary"/>
+                <filteritem type="filepath" name="*.lock" desc="Lock files"/>
+            </filefilter>
+        </filefilterlist>
+    </oatconfig>
+</configuration>

@@ -5,12 +5,64 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2024-12-14
+## [1.0.0] - 2024-12-15
+
+### Changed - Restructuring to HarmonyOS Architecture
+
+#### Directory Structure
+- **Restructured to modular architecture** following protobufjs pattern
+  - Moved core code to `library/` directory
+  - Created `entry/` directory for HarmonyOS application entry points
+  - Created `AppScope/` directory for application configuration
+  - Established workspace structure with root and library packages
+
+#### HarmonyOS Integration
+- **Added HarmonyOS configuration files**
+  - `build-profile.json5` - Build configuration for app and modules
+  - `oh-package.json5` - HarmonyOS package metadata
+  - `hvigorfile.ts` - Build tool configuration
+  - `hvigorw` and `hvigorw.bat` - Build wrapper scripts
+  - `AppScope/app.json5` - Application scope configuration
+  - `entry/src/main.ets` - HarmonyOS entry point
+
+#### Build and Package Configuration
+- **Updated package.json**
+  - Main entry point: `library/index.js`
+  - Type definitions: `library/index.d.ts`
+  - Updated build scripts for new directory structure
+  - Added "harmonyos" keyword
+  - Updated file inclusions for new structure
+
+- **Updated Cargo.toml**
+  - Converted to workspace structure
+  - Library code in `library/` subdirectory
+  - Shared release profile configuration
+
+#### Documentation and Metadata
+- **Added new files**
+  - `NOTICE` - Attribution notices for dependencies
+  - `README.OpenSource` - Open source compliance information
+  - `OAT.xml` - OpenAtom OAT configuration
+
+#### Code Minimization
+- **Removed non-essential components** for minimal core
+  - Removed `benchmarks/` directory (moved to separate repo/branch if needed)
+  - Removed `test.js` from root (tests now in `library/test/`)
+  - Updated .npmignore to exclude HarmonyOS development files
+
+#### Breaking Changes
+- **File paths updated** - All imports must now reference `library/` prefix
+  - Old: `require('@protobuf-rs/core')`
+  - New: Still works - package.json main points to `library/index.js`
+  - Direct file access: Must use `library/` prefix
+
+- **Build commands updated** - Build must be run from library directory
+  - Scripts automatically handle this via package.json
 
 ### Added
 
 #### Phase 3: Advanced Performance Optimization
-- **SIMD Optimization Module** (`src/simd.rs`)
+- **SIMD Optimization Module** (`library/src/simd.rs`)
   - Batch varint encoding: `encodeVarintBatchSimd()`
   - Batch varint decoding: `decodeVarintBatchSimd()`
   - Runtime CPU feature detection with graceful fallback

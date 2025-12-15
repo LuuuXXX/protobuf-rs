@@ -1,0 +1,29 @@
+[
+  {
+    "Name": "protobuf-rs",
+    "License": "BSD-3-Clause",
+    "License File": "LICENSE",
+    "Version Number": "1.0.0",
+    "Owner": "LuuuXXX",
+    "Upstream URL": "https://github.com/LuuuXXX/protobuf-rs",
+    "Description": "High-performance Protocol Buffers implementation for Node.js powered by Rust and NAPI-RS. Provides 3-15x performance improvements over pure JavaScript implementations while maintaining 100% API compatibility with protobuf.js."
+  },
+  {
+    "Name": "protobuf.js",
+    "License": "BSD-3-Clause",
+    "License File": "node_modules/protobufjs/LICENSE",
+    "Version Number": "7.2.5",
+    "Owner": "Daniel Wirtz",
+    "Upstream URL": "https://github.com/protobufjs/protobuf.js",
+    "Description": "Protocol Buffers for JavaScript (& TypeScript). This project provides API compatibility with protobuf.js."
+  },
+  {
+    "Name": "napi-rs",
+    "License": "MIT",
+    "License File": "node_modules/@napi-rs/cli/LICENSE",
+    "Version Number": "3.5.0",
+    "Owner": "NAPI-RS Team",
+    "Upstream URL": "https://github.com/napi-rs/napi-rs",
+    "Description": "A framework for building pre-compiled Node.js addons in Rust. Used to create native bindings between Rust and Node.js."
+  }
+]

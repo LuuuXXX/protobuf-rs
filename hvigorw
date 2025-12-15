@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# HarmonyOS hvigor wrapper script for Unix/Linux/macOS
+# This script will execute the hvigor build tool
+
+DEFAULT_HVIGOR_VERSION="4.0.0"
+HVIGOR_APP_HOME="hvigor"
+HVIGOR_WRAPPER_DIR="${HVIGOR_APP_HOME}/wrapper"
+
+error() {
+    echo "ERROR: $*" >&2
+}
+
+info() {
+    echo "INFO: $*"
+}
+
+# Check if hvigor is installed
+if [ ! -d "${HVIGOR_WRAPPER_DIR}" ]; then
+    error "hvigor wrapper not found in ${HVIGOR_WRAPPER_DIR}"
+    error "Please install hvigor first"
+    exit 1
+fi
+
+# Execute hvigor
+info "Executing hvigor..."
+node "${HVIGOR_WRAPPER_DIR}/hvigor.js" "$@"

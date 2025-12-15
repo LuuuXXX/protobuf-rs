@@ -5,11 +5,56 @@
 [![CI](https://github.com/LuuuXXX/protobuf-rs/workflows/CI/badge.svg)](https://github.com/LuuuXXX/protobuf-rs/actions)
 [![性能](https://img.shields.io/badge/性能-快3.14倍-brightgreen)](docs/BENCHMARK_RESULTS.md)
 [![内存](https://img.shields.io/badge/内存--42%25-blue)](docs/BENCHMARK_RESULTS.md)
-[![兼容性](https://img.shields.io/badge/兼容性-100%25-brightgreen)](test/protobufjs-compatibility.js)
+[![兼容性](https://img.shields.io/badge/兼容性-100%25-brightgreen)](library/test/protobufjs-compatibility.js)
+[![HarmonyOS](https://img.shields.io/badge/HarmonyOS-就绪-orange)](docs/HARMONYOS.md)
 
 **基于 Rust 和 NAPI-RS 的高性能 Node.js Protocol Buffers 实现**
 
 [English](README.md) | 简体中文
+
+## 📁 项目结构 (v1.0.0)
+
+本项目已重构以支持 **HarmonyOS**，同时保持 Node.js 兼容性：
+
+```
+protobuf-rs/
+├── library/              # 核心库（从根目录移动）
+│   ├── src/             # Rust 源代码
+│   ├── test/            # 测试文件
+│   ├── index.js         # JavaScript 入口点
+│   ├── index.d.ts       # TypeScript 类型定义
+│   ├── protobufjs-compat.js  # 兼容层
+│   ├── Cargo.toml       # Rust 包配置
+│   └── build.rs         # 构建脚本
+├── entry/               # HarmonyOS 入口模块
+│   └── src/
+│       └── main.ets     # HarmonyOS 入口点
+├── AppScope/            # HarmonyOS 应用配置
+│   └── app.json5
+├── examples/            # 示例代码
+├── docs/                # 文档
+├── integration/         # 集成测试
+├── scripts/             # 构建和工具脚本
+├── build-profile.json5  # HarmonyOS 构建配置
+├── oh-package.json5     # HarmonyOS 包配置
+├── hvigorfile.ts        # HarmonyOS 构建工具配置
+├── hvigorw / hvigorw.bat  # 构建包装脚本
+├── package.json         # Node.js 包配置（指向 library/）
+├── Cargo.toml           # Rust 工作空间配置
+└── README.md
+```
+
+### v1.0.0 破坏性变更
+
+对于 npm 用户，重构是**透明的** - 包的使用方式完全不变：
+
+```javascript
+// 仍然可以像以前一样使用
+const protobuf = require('@protobuf-rs/core');
+const { Reader, Writer } = require('@protobuf-rs/core/protobufjs-compat');
+```
+
+package.json 的 `main` 字段指向 `library/index.js`，因此所有导入都保持不变。
 
 ## 🚀 性能表现
 
