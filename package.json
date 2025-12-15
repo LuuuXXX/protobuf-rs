@@ -73,6 +73,7 @@
   },
   "devDependencies": {
     "@napi-rs/cli": "^3.5.0",
+    "@types/node": "^25.0.2",
     "protobufjs": "^7.2.5",
     "tape": "^5.7.0"
   }
