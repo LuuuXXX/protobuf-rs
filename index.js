@@ -5,7 +5,8 @@ let nativeBinding;
 try {
     nativeBinding = require('./index.node');
 } catch (e) {
-    console.warn('Native binding not available, some features will be unavailable');
+    console.warn('Native binding not available. Core varint/zigzag functions will be unavailable.');
+    console.warn('To use native acceleration, build the module with: npm run build');
     nativeBinding = {};
 }
 

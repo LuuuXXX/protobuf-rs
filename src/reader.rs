@@ -240,7 +240,7 @@ impl Reader {
             let byte = self.buffer[self.pos];
             self.pos += 1;
 
-            if i == 9 && byte > 1 {
+            if i == 9 && (byte & 0x7F) > 1 {
                 return Err(Error::from_reason("Varint overflow"));
             }
 
@@ -357,18 +357,18 @@ impl Reader {
     pub fn skip_type(&mut self, wire_type: u32) -> Result<()> {
         match wire_type {
             0 => {
-                // Varint - read until high bit is 0
-                loop {
+                // Varint - read until high bit is 0, with max 10 bytes
+                for _ in 0..10 {
                     if self.pos >= self.buffer.len() {
                         return Err(Error::from_reason("Buffer underflow"));
                     }
                     let byte = self.buffer[self.pos];
                     self.pos += 1;
                     if byte & 0x80 == 0 {
-                        break;
+                        return Ok(());
                     }
                 }
-                Ok(())
+                Err(Error::from_reason("Varint too long"))
             }
             1 => {
                 // 64-bit

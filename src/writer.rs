@@ -217,7 +217,8 @@ impl Writer {
     /// Write an i32 as varint
     #[napi]
     pub fn int32(&mut self, value: i32) {
-        self.uint32(value as u32);
+        // i32 is encoded as u64 varint (sign-extended to 64 bits)
+        self.uint64(value as i64);
     }
 
     /// 写入一个 zigzag 编码的 i32 作为 varint
@@ -232,6 +233,7 @@ impl Writer {
     /// Write a u64 as varint
     #[napi]
     pub fn uint64(&mut self, value: i64) {
+        // JavaScript numbers are i64, so we accept i64 and treat as u64
         let mut n = value as u64;
         loop {
             let mut byte = (n & 0x7F) as u8;
@@ -320,8 +322,13 @@ impl Writer {
     /// 当前缓冲区长度，用于稍后计算消息长度
     /// Current buffer length, used to calculate message length later
     #[napi]
-    pub fn fork(&self) -> u32 {
-        self.buffer.len() as u32
+    pub fn fork(&mut self) -> u32 {
+        // Reserve space for varint length (max 5 bytes for typical messages)
+        // We'll write the actual length in ldelim()
+        let pos = self.buffer.len() as u32;
+        // Push a placeholder byte - will be updated in ldelim
+        self.buffer.push(0);
+        pos
     }
 
     /// 写入长度限定符（在 fork 之后使用）
@@ -331,40 +338,39 @@ impl Writer {
     /// * `fork_pos` - fork() 返回的位置 / Position returned by fork()
     #[napi]
     pub fn ldelim(&mut self, fork_pos: u32) -> Result<()> {
-        let len = (self.buffer.len() as u32).saturating_sub(fork_pos);
-        
-        // Calculate varint length
-        let mut varint_len = 1;
-        let mut n = len;
-        while n >= 0x80 {
-            varint_len += 1;
-            n >>= 7;
-        }
-        
-        // Insert length varint at fork position
         let fork_pos = fork_pos as usize;
         let current_len = self.buffer.len();
         
-        // Make room for the varint
-        self.buffer.resize(current_len + varint_len, 0);
+        // Calculate the message length (excluding the length varint itself)
+        let msg_len = (current_len - fork_pos - 1) as u32;
         
-        // Shift existing data
-        self.buffer.copy_within(fork_pos..current_len, fork_pos + varint_len);
-        
-        // Write the length varint
-        let mut pos = fork_pos;
-        let mut n = len;
+        // Encode the length as varint
+        let mut len_bytes = Vec::new();
+        let mut n = msg_len;
         loop {
             let mut byte = (n & 0x7F) as u8;
             n >>= 7;
             if n != 0 {
                 byte |= 0x80;
             }
-            self.buffer[pos] = byte;
-            pos += 1;
+            len_bytes.push(byte);
             if n == 0 {
                 break;
             }
+        }
+        
+        // Check if we need more space than the placeholder byte
+        if len_bytes.len() > 1 {
+            // Need to insert additional bytes
+            let extra = len_bytes.len() - 1;
+            self.buffer.resize(current_len + extra, 0);
+            // Shift the message data to make room
+            self.buffer.copy_within(fork_pos + 1..current_len, fork_pos + len_bytes.len());
+        }
+        
+        // Write the length varint at fork position
+        for (i, &byte) in len_bytes.iter().enumerate() {
+            self.buffer[fork_pos + i] = byte;
         }
         
         Ok(())
