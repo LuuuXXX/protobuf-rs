@@ -1,15 +1,135 @@
-# protobuf-rs
+# protobuf-rs (OpenHarmony Port)
 
-[![npm version](https://img.shields.io/npm/v/@protobuf-rs/core.svg)](https://www.npmjs.com/package/@protobuf-rs/core)
-[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE)
-[![CI](https://github.com/LuuuXXX/protobuf-rs/workflows/CI/badge.svg)](https://github.com/LuuuXXX/protobuf-rs/actions)
-[![Performance](https://img.shields.io/badge/Performance-3.14x_faster-brightgreen)](docs/BENCHMARK_RESULTS.md)
-[![Memory](https://img.shields.io/badge/Memory--42%25_reduction-blue)](docs/BENCHMARK_RESULTS.md)
-[![Compatibility](https://img.shields.io/badge/Compatibility-100%25-brightgreen)](test/protobufjs-compatibility.js)
+High-performance Protocol Buffers implementation for OpenHarmony, powered by Rust.
 
-A **high-performance Protocol Buffers implementation for Node.js** powered by Rust and NAPI-RS.
+## Status: Phase 2 - Core Simplification 🚧
 
-**[English](README.md)** | **[简体中文](README.zh.md)**
+- ✅ Phase 1: Migrated to ohos-rs
+- 🚧 Phase 2: Simplified Rust core + JS wrappers (Current)
+- ⏳ Phase 3: Integrate protobufjs code
+- ⏳ Phase 4: Testing
+- ⏳ Phase 5: Documentation
+- ⏳ Phase 6: Examples & Benchmarks
+
+## Current Structure
+
+```
+protobuf-rs/
+├── src/               # Rust core implementation
+│   ├── lib.rs        # Core exports
+│   ├── reader.rs     # Protocol Buffer reader
+│   ├── writer.rs     # Protocol Buffer writer
+│   ├── pool.rs       # Memory pool (future)
+│   ├── reader.js     # JavaScript wrapper
+│   └── writer.js     # JavaScript wrapper
+├── future/           # Features for v1.1+
+│   ├── simd.rs       # SIMD batch operations
+│   └── parallel.rs   # Parallel processing
+├── index.js          # Main entry point
+├── Cargo.toml        # Rust configuration
+├── package.json      # npm configuration
+└── ROADMAP.md        # Detailed roadmap
+```
+
+## Features
+
+### Core Functionality (Phase 1 & 2)
+- ✅ High-performance varint encoding/decoding
+- ✅ ZigZag encoding for signed integers
+- ✅ Field tag encoding/decoding
+- ✅ Complete Reader API (uint32/64, int32/64, sint32/64, bool, fixed*, float, double, bytes, string)
+- ✅ Complete Writer API (uint32/64, int32/64, sint32/64, bool, fixed*, float, double, bytes, string, fork/ldelim)
+- ✅ JavaScript wrappers with automatic fallback
+
+### Future Features (v1.1+)
+- ⏳ SIMD batch operations (40-60x speedup)
+- ⏳ Parallel processing (multi-core utilization)
+- ⏳ Memory pooling (reduced allocations)
+
+## Build
+
+```bash
+# Build for OpenHarmony (when toolchain available)
+cargo build --release --target aarch64-linux-ohos
+
+# Or build for current platform
+cargo build --release
+```
+
+## Installation
+
+```bash
+npm install @protobuf-rs/ohos-core
+```
+
+## Quick Start
+
+```javascript
+const { Reader, Writer, encodeVarint, decodeVarint } = require('@protobuf-rs/ohos-core');
+
+// Encode/decode varints
+const encoded = encodeVarint(300);
+const decoded = decodeVarint(encoded);
+
+// Use Reader
+const reader = new Reader(buffer);
+const value = reader.uint32();
+const str = reader.string();
+
+// Use Writer
+const writer = new Writer();
+writer.uint32(100);
+writer.string("Hello");
+const result = writer.finish();
+```
+
+## API Reference
+
+### Core Functions
+
+- `encodeVarint(value)` - Encode 64-bit integer as varint
+- `decodeVarint(buffer)` - Decode varint from buffer
+- `encodeZigzag(value)` - ZigZag encode signed integer
+- `decodeZigzag(value)` - ZigZag decode signed integer
+- `encodeFieldTag(fieldNumber, wireType)` - Encode field tag
+- `decodeFieldTag(buffer)` - Decode field tag
+
+### Reader Class
+
+Methods: `uint32()`, `int32()`, `sint32()`, `uint64()`, `int64()`, `sint64()`, `bool()`, `fixed32()`, `sfixed32()`, `fixed64()`, `sfixed64()`, `float()`, `double()`, `bytes()`, `string()`, `skip(n)`, `skip_type(wireType)`, `reset()`
+
+### Writer Class
+
+Methods: `uint32(v)`, `int32(v)`, `sint32(v)`, `uint64(v)`, `int64(v)`, `sint64(v)`, `bool(v)`, `fixed32(v)`, `sfixed32(v)`, `fixed64(v)`, `sfixed64(v)`, `float(v)`, `double(v)`, `bytes(v)`, `string(v)`, `fork()`, `ldelim(pos)`, `reset()`, `finish()`
+
+## Development Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the complete phase-by-phase development plan.
+
+## Current Progress
+
+Phase 2 is nearly complete:
+- ✅ Rust core simplified
+- ✅ Future features moved to `future/` directory
+- ✅ Complete Reader/Writer APIs implemented
+- ✅ JavaScript wrappers created
+- ✅ Old Node.js files removed
+- ✅ Configuration updated for OpenHarmony
+- ⏳ Final documentation updates
+
+## License
+
+MIT License - See [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Built with Rust and NAPI-RS
+- Inspired by protobufjs
+- Targeting OpenHarmony platform
+
+---
+
+**Made with ❤️ and Rust for OpenHarmony**
 
 ## 🚀 Performance
 

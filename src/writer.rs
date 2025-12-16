@@ -212,6 +212,169 @@ impl Writer {
     pub fn is_empty(&self) -> bool {
         self.buffer.is_empty()
     }
+
+    /// 写入一个 i32 作为 varint
+    /// Write an i32 as varint
+    #[napi]
+    pub fn int32(&mut self, value: i32) {
+        // i32 is encoded as u64 varint (sign-extended to 64 bits)
+        self.uint64(value as i64);
+    }
+
+    /// 写入一个 zigzag 编码的 i32 作为 varint
+    /// Write a zigzag-encoded i32 as varint
+    #[napi]
+    pub fn sint32(&mut self, value: i32) {
+        let n = ((value << 1) ^ (value >> 31)) as u32;
+        self.uint32(n);
+    }
+
+    /// 写入一个 u64 作为 varint
+    /// Write a u64 as varint
+    #[napi]
+    pub fn uint64(&mut self, value: i64) {
+        // JavaScript numbers are i64, so we accept i64 and treat as u64
+        let mut n = value as u64;
+        loop {
+            let mut byte = (n & 0x7F) as u8;
+            n >>= 7;
+
+            if n != 0 {
+                byte |= 0x80;
+            }
+
+            self.buffer.push(byte);
+
+            if n == 0 {
+                break;
+            }
+        }
+    }
+
+    /// 写入一个 i64 作为 varint
+    /// Write an i64 as varint
+    #[napi]
+    pub fn int64(&mut self, value: i64) {
+        self.uint64(value);
+    }
+
+    /// 写入一个 zigzag 编码的 i64 作为 varint
+    /// Write a zigzag-encoded i64 as varint
+    #[napi]
+    pub fn sint64(&mut self, value: i64) {
+        let n = ((value << 1) ^ (value >> 63)) as u64;
+        self.uint64(n as i64);
+    }
+
+    /// 写入一个布尔值
+    /// Write a boolean value
+    #[napi]
+    pub fn bool(&mut self, value: bool) {
+        self.uint32(if value { 1 } else { 0 });
+    }
+
+    /// 写入一个固定的 32 位值
+    /// Write a fixed 32-bit value
+    #[napi]
+    pub fn fixed32(&mut self, value: u32) {
+        self.buffer.extend_from_slice(&value.to_le_bytes());
+    }
+
+    /// 写入一个固定的有符号 32 位值
+    /// Write a fixed signed 32-bit value
+    #[napi]
+    pub fn sfixed32(&mut self, value: i32) {
+        self.fixed32(value as u32);
+    }
+
+    /// 写入一个固定的 64 位值
+    /// Write a fixed 64-bit value
+    #[napi]
+    pub fn fixed64(&mut self, value: i64) {
+        self.buffer.extend_from_slice(&(value as u64).to_le_bytes());
+    }
+
+    /// 写入一个固定的有符号 64 位值
+    /// Write a fixed signed 64-bit value
+    #[napi]
+    pub fn sfixed64(&mut self, value: i64) {
+        self.fixed64(value);
+    }
+
+    /// 写入一个浮点数
+    /// Write a float value
+    #[napi]
+    pub fn float(&mut self, value: f64) {
+        self.fixed32((value as f32).to_bits());
+    }
+
+    /// 写入一个双精度浮点数
+    /// Write a double value
+    #[napi]
+    pub fn double(&mut self, value: f64) {
+        self.fixed64(value.to_bits() as i64);
+    }
+
+    /// 创建一个子写入器用于长度限定消息
+    /// Fork a new writer for length-delimited messages
+    /// 
+    /// # 返回 / Returns
+    /// 当前缓冲区长度，用于稍后计算消息长度
+    /// Current buffer length, used to calculate message length later
+    #[napi]
+    pub fn fork(&mut self) -> u32 {
+        // Reserve space for varint length (max 5 bytes for typical messages)
+        // We'll write the actual length in ldelim()
+        let pos = self.buffer.len() as u32;
+        // Push a placeholder byte - will be updated in ldelim
+        self.buffer.push(0);
+        pos
+    }
+
+    /// 写入长度限定符（在 fork 之后使用）
+    /// Write length delimiter (use after fork)
+    /// 
+    /// # 参数 / Arguments
+    /// * `fork_pos` - fork() 返回的位置 / Position returned by fork()
+    #[napi]
+    pub fn ldelim(&mut self, fork_pos: u32) -> Result<()> {
+        let fork_pos = fork_pos as usize;
+        let current_len = self.buffer.len();
+        
+        // Calculate the message length (excluding the length varint itself)
+        let msg_len = (current_len - fork_pos - 1) as u32;
+        
+        // Encode the length as varint
+        let mut len_bytes = Vec::new();
+        let mut n = msg_len;
+        loop {
+            let mut byte = (n & 0x7F) as u8;
+            n >>= 7;
+            if n != 0 {
+                byte |= 0x80;
+            }
+            len_bytes.push(byte);
+            if n == 0 {
+                break;
+            }
+        }
+        
+        // Check if we need more space than the placeholder byte
+        if len_bytes.len() > 1 {
+            // Need to insert additional bytes
+            let extra = len_bytes.len() - 1;
+            self.buffer.resize(current_len + extra, 0);
+            // Shift the message data to make room
+            self.buffer.copy_within(fork_pos + 1..current_len, fork_pos + len_bytes.len());
+        }
+        
+        // Write the length varint at fork position
+        for (i, &byte) in len_bytes.iter().enumerate() {
+            self.buffer[fork_pos + i] = byte;
+        }
+        
+        Ok(())
+    }
 }
 
 impl Default for Writer {

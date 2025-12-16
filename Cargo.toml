@@ -1,7 +1,9 @@
 [package]
-name = "protobuf-rs"
-version = "0.1.0"
+name = "protobuf-rs-ohos"
+version = "1.0.0"
 edition = "2021"
+authors = ["LuuuXXX"]
+description = "High-performance Protocol Buffers for OpenHarmony"
 
 [lib]
 crate-type = ["cdylib"]
@@ -10,11 +12,12 @@ crate-type = ["cdylib"]
 napi = "2.16"
 napi-derive = "2.16"
 byteorder = "1.5"
-rayon = "1.8"
-parking_lot = "0.12"
 
 [build-dependencies]
 napi-build = "2"
 
 [profile.release]
 lto = true
+codegen-units = 1
+opt-level = 3
+strip = true

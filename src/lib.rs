@@ -1,19 +1,12 @@
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
-// 第三阶段：高级性能模块
-// Phase 3: Advanced Performance Modules
-mod parallel;  // 并行处理模块
-mod pool;      // 内存池模块
-mod reader;    // 零拷贝读取器
-mod simd;      // SIMD 批处理优化
-mod writer;    // 缓冲写入器
+// Core modules for OpenHarmony
+mod reader;    // 零拷贝读取器 / Zero-copy reader
+mod writer;    // 缓冲写入器 / Buffered writer
 
-// 重新导出第三阶段的核心功能
-// Re-export Phase 3 functions
-pub use parallel::{decode_varints_parallel, encode_varints_parallel, process_u32_batch_parallel};
+// Re-export core functionality
 pub use reader::Reader;
-pub use simd::{decode_varint_batch_simd, encode_varint_batch_simd};
 pub use writer::Writer;
 
 // Protocol Buffers 规范常量

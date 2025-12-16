@@ -1,80 +1,13 @@
 {
-  "name": "@protobuf-rs/core",
+  "name": "@protobuf-rs/ohos-core",
   "version": "1.0.0",
-  "description": "High-performance Protocol Buffers for Node.js - 3-15x faster than pure JavaScript, powered by Rust and NAPI-RS",
+  "description": "High-performance Protocol Buffers for OpenHarmony (Rust core)",
   "main": "index.js",
-  "types": "index.d.ts",
-  "napi": {
-    "name": "protobuf-rs",
-    "triples": {
-      "defaults": true,
-      "additional": []
-    }
-  },
   "scripts": {
-    "artifacts": "napi artifacts",
-    "build": "napi build --platform --release",
-    "build:debug": "napi build --platform",
-    "prepublishOnly": "npm run build && npm test",
-    "test": "node test.js && node test/protobufjs-compatibility.js && node test/protobufjs-compat-test.js",
-    "test:example": "node examples/protobufjs-migration.js",
-    "test:drop-in": "node examples/drop-in-replacement.js",
-    "benchmark": "node benchmarks/real-world.js",
-    "benchmark:comprehensive": "node benchmarks/comprehensive.js",
-    "benchmark:cpu": "node benchmarks/cpu-profile.js",
-    "benchmark:memory": "node --expose-gc benchmarks/memory-profile.js",
-    "test:protobufjs": "bash scripts/run-protobufjs-tests.sh",
-    "universal": "napi universal",
-    "version": "napi version"
+    "build": "cargo build --release",
+    "build:debug": "cargo build"
   },
-  "keywords": [
-    "protobuf",
-    "protocol-buffers",
-    "grpc",
-    "rust",
-    "napi-rs",
-    "napi",
-    "native",
-    "performance",
-    "fast",
-    "high-performance",
-    "serialization",
-    "encoding",
-    "decoding",
-    "varint",
-    "simd",
-    "zero-copy"
-  ],
+  "keywords": ["protobuf", "ohos", "rust", "performance"],
   "author": "LuuuXXX",
-  "license": "BSD-3-Clause",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/LuuuXXX/protobuf-rs.git"
-  },
-  "bugs": {
-    "url": "https://github.com/LuuuXXX/protobuf-rs/issues"
-  },
-  "homepage": "https://github.com/LuuuXXX/protobuf-rs#readme",
-  "files": [
-    "*.node",
-    "index.js",
-    "index.d.ts",
-    "protobufjs-compat.js",
-    "integration/",
-    "docs/PERFORMANCE_REPORT.md",
-    "docs/BENCHMARK_RESULTS.md",
-    "docs/COMPATIBILITY_REPORT.md",
-    "README.md",
-    "CHANGELOG.md",
-    "LICENSE"
-  ],
-  "engines": {
-    "node": ">=12.0.0"
-  },
-  "devDependencies": {
-    "@napi-rs/cli": "^3.5.0",
-    "@types/node": "^25.0.2",
-    "protobufjs": "^7.2.5",
-    "tape": "^5.7.0"
-  }
+  "license": "MIT"
 }
