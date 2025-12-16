@@ -209,6 +209,183 @@ impl Reader {
     pub fn reset(&mut self) {
         self.pos = 0;
     }
+
+    /// 读取一个 varint 作为 i32
+    /// Read a varint as i32
+    #[napi]
+    pub fn int32(&mut self) -> Result<i32> {
+        self.uint32().map(|v| v as i32)
+    }
+
+    /// 读取一个 zigzag 编码的 varint 作为 i32
+    /// Read a zigzag-encoded varint as i32
+    #[napi]
+    pub fn sint32(&mut self) -> Result<i32> {
+        let n = self.uint32()?;
+        Ok(((n >> 1) as i32) ^ (-((n & 1) as i32)))
+    }
+
+    /// 读取一个 varint 作为 u64
+    /// Read a varint as u64
+    #[napi]
+    pub fn uint64(&mut self) -> Result<i64> {
+        let mut result: u64 = 0;
+        let mut shift = 0;
+
+        for i in 0..10 {
+            if self.pos >= self.buffer.len() {
+                return Err(Error::from_reason("Buffer underflow"));
+            }
+
+            let byte = self.buffer[self.pos];
+            self.pos += 1;
+
+            if i == 9 && byte > 1 {
+                return Err(Error::from_reason("Varint overflow"));
+            }
+
+            result |= ((byte & 0x7F) as u64) << shift;
+
+            if byte & 0x80 == 0 {
+                return Ok(result as i64);
+            }
+
+            shift += 7;
+        }
+
+        Err(Error::from_reason("Varint too long"))
+    }
+
+    /// 读取一个 varint 作为 i64
+    /// Read a varint as i64
+    #[napi]
+    pub fn int64(&mut self) -> Result<i64> {
+        self.uint64()
+    }
+
+    /// 读取一个 zigzag 编码的 varint 作为 i64
+    /// Read a zigzag-encoded varint as i64
+    #[napi]
+    pub fn sint64(&mut self) -> Result<i64> {
+        let n = self.uint64()? as u64;
+        Ok(((n >> 1) as i64) ^ (-((n & 1) as i64)))
+    }
+
+    /// 读取一个布尔值
+    /// Read a boolean value
+    #[napi]
+    pub fn bool(&mut self) -> Result<bool> {
+        self.uint32().map(|v| v != 0)
+    }
+
+    /// 读取一个固定的 32 位值
+    /// Read a fixed 32-bit value
+    #[napi]
+    pub fn fixed32(&mut self) -> Result<u32> {
+        if self.pos + 4 > self.buffer.len() {
+            return Err(Error::from_reason("Buffer underflow"));
+        }
+
+        let result = u32::from_le_bytes([
+            self.buffer[self.pos],
+            self.buffer[self.pos + 1],
+            self.buffer[self.pos + 2],
+            self.buffer[self.pos + 3],
+        ]);
+        self.pos += 4;
+        Ok(result)
+    }
+
+    /// 读取一个固定的有符号 32 位值
+    /// Read a fixed signed 32-bit value
+    #[napi]
+    pub fn sfixed32(&mut self) -> Result<i32> {
+        self.fixed32().map(|v| v as i32)
+    }
+
+    /// 读取一个固定的 64 位值
+    /// Read a fixed 64-bit value
+    #[napi]
+    pub fn fixed64(&mut self) -> Result<i64> {
+        if self.pos + 8 > self.buffer.len() {
+            return Err(Error::from_reason("Buffer underflow"));
+        }
+
+        let result = u64::from_le_bytes([
+            self.buffer[self.pos],
+            self.buffer[self.pos + 1],
+            self.buffer[self.pos + 2],
+            self.buffer[self.pos + 3],
+            self.buffer[self.pos + 4],
+            self.buffer[self.pos + 5],
+            self.buffer[self.pos + 6],
+            self.buffer[self.pos + 7],
+        ]);
+        self.pos += 8;
+        Ok(result as i64)
+    }
+
+    /// 读取一个固定的有符号 64 位值
+    /// Read a fixed signed 64-bit value
+    #[napi]
+    pub fn sfixed64(&mut self) -> Result<i64> {
+        self.fixed64()
+    }
+
+    /// 读取一个浮点数
+    /// Read a float value
+    #[napi]
+    pub fn float(&mut self) -> Result<f64> {
+        let bits = self.fixed32()?;
+        Ok(f32::from_bits(bits) as f64)
+    }
+
+    /// 读取一个双精度浮点数
+    /// Read a double value
+    #[napi]
+    pub fn double(&mut self) -> Result<f64> {
+        let bits = self.fixed64()? as u64;
+        Ok(f64::from_bits(bits))
+    }
+
+    /// 根据线路类型跳过字段
+    /// Skip a field based on wire type
+    /// 
+    /// # 参数 / Arguments
+    /// * `wire_type` - 线路类型 (0-5) / Wire type (0-5)
+    #[napi]
+    pub fn skip_type(&mut self, wire_type: u32) -> Result<()> {
+        match wire_type {
+            0 => {
+                // Varint - read until high bit is 0
+                loop {
+                    if self.pos >= self.buffer.len() {
+                        return Err(Error::from_reason("Buffer underflow"));
+                    }
+                    let byte = self.buffer[self.pos];
+                    self.pos += 1;
+                    if byte & 0x80 == 0 {
+                        break;
+                    }
+                }
+                Ok(())
+            }
+            1 => {
+                // 64-bit
+                self.skip(8)
+            }
+            2 => {
+                // Length-delimited
+                let len = self.uint32()?;
+                self.skip(len)
+            }
+            5 => {
+                // 32-bit
+                self.skip(4)
+            }
+            _ => Err(Error::from_reason("Invalid wire type")),
+        }
+    }
 }
 
 #[cfg(test)]

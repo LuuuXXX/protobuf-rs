@@ -5,6 +5,100 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - Phase 2: Core Simplification
+
+### Added
+
+#### Phase 2: Rust Core Simplification & JS Wrappers
+- **Future Directory Structure**
+  - Created `future/` directory for v1.1+ features
+  - Moved `simd.rs` to `future/simd.rs` (SIMD batch operations)
+  - Moved `parallel.rs` to `future/parallel.rs` (parallel processing)
+  - Kept `pool.rs` in src/ with `#[allow(dead_code)]` annotation
+
+- **Enhanced Reader API**
+  - Added complete Protocol Buffer type support:
+    - `int32()`, `sint32()` - Signed 32-bit integers
+    - `uint64()`, `int64()`, `sint64()` - 64-bit integers
+    - `bool()` - Boolean values
+    - `fixed32()`, `sfixed32()` - Fixed 32-bit values
+    - `fixed64()`, `sfixed64()` - Fixed 64-bit values
+    - `float()`, `double()` - Floating point values
+    - `skip_type(wire_type)` - Skip field by wire type
+  - All existing methods retained: `uint32()`, `bytes()`, `string()`, `skip()`, `reset()`
+
+- **Enhanced Writer API**
+  - Added complete Protocol Buffer type support:
+    - `int32()`, `sint32()` - Signed 32-bit integers
+    - `uint64()`, `int64()`, `sint64()` - 64-bit integers
+    - `bool()` - Boolean values
+    - `fixed32()`, `sfixed32()` - Fixed 32-bit values
+    - `fixed64()`, `sfixed64()` - Fixed 64-bit values
+    - `float()`, `double()` - Floating point values
+    - `fork()`, `ldelim()` - Length-delimited message support
+  - All existing methods retained: `uint32()`, `bytes()`, `string()`, `reset()`, `finish()`
+
+- **JavaScript Wrapper Layer**
+  - Created `src/reader.js` - Smart wrapper with native/JS fallback
+  - Created `src/writer.js` - Smart wrapper with native/JS fallback
+  - New simplified `index.js` entry point
+  - Automatic fallback to pure JS when native unavailable
+  - `_useNative` flag for testing native availability
+
+- **Documentation**
+  - Created comprehensive `ROADMAP.md` with complete development plan
+  - Updated README.md with Phase 2 status and current structure
+  - Documented all new Reader/Writer methods
+
+### Changed
+
+- **Simplified Rust Core**
+  - Removed Phase 3 exports from `src/lib.rs`
+  - Now exports only: `Reader`, `Writer`, basic varint/zigzag/field_tag functions
+  - Cleaner module structure focused on core functionality
+
+- **Configuration Updates**
+  - Updated `Cargo.toml`:
+    - Package renamed to `protobuf-rs-ohos`
+    - Version set to 1.0.0
+    - Removed unused dependencies (`rayon`, `parking_lot`)
+    - Optimized release profile (LTO, strip, opt-level 3)
+  - Updated `package.json`:
+    - Package renamed to `@protobuf-rs/ohos-core`
+    - Simplified scripts (build, build:debug only)
+    - Removed Node.js-specific tooling
+    - Updated description for OpenHarmony target
+
+### Removed
+
+- **Node.js-Specific Files**
+  - Deleted `protobufjs-compat.js` (Node.js compatibility layer)
+  - Deleted `integration/` directory (Node.js adapters)
+  - Deleted `benchmarks/` directory (will recreate in Phase 6)
+  - Deleted `examples/` directory (will recreate in Phase 6)
+  - Deleted `test/` directory (will recreate in Phase 4)
+
+- **Dependencies**
+  - Removed `rayon` (parallel processing - moved to future/)
+  - Removed `parking_lot` (synchronization - moved to future/)
+
+### Migration Notes
+
+This is a major restructuring for OpenHarmony compatibility:
+
+1. **For Users**: The core API remains the same. Reader and Writer now have complete Protocol Buffer support.
+2. **For Developers**: Advanced features (SIMD, parallel) moved to `future/` directory for v1.1+
+3. **Build Target**: Configured for OpenHarmony (`aarch64-linux-ohos` when toolchain available)
+
+### Next Steps (Phase 3)
+
+- Integrate protobufjs pure JavaScript implementation
+- Add comprehensive fallback mechanism
+- Ensure 100% API compatibility
+- Create test suite
+
+---
+
 ## [1.0.0] - 2024-12-14
 
 ### Added
