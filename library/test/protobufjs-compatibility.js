@@ -6,7 +6,7 @@
  */
 
 const tape = require('tape');
-const { Reader, Writer, isNativeAvailable } = require('../../integration/protobufjs-adapter');
+const { Reader, Writer } = require('../index');
 
 console.log('\n🧪 Running protobuf.js compatibility tests...\n');
 
@@ -362,13 +362,6 @@ tape.test('Writer reset()', (t) => {
   t.equal(reader.uint32(), 300, 'should only contain value after reset');
   t.ok(reader.pos === reader.len, 'should be at end of buffer');
   
-  t.end();
-});
-
-tape.test('Implementation type detection', (t) => {
-  const available = isNativeAvailable();
-  t.ok(typeof available === 'boolean', 'isNativeAvailable should return boolean');
-  console.log(`  Using ${available ? 'native Rust' : 'JavaScript'} implementation`);
   t.end();
 });
 
