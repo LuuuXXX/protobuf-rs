@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+cli/node_modules/
+
+# Build outputs
+dist/
+*.node
+target/
+rust/target/
+
+# Temporary files
+/tmp/
+*.tmp
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+.nyc_output/

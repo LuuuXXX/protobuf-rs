@@ -28,9 +28,12 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
+    "install": "node scripts/build-rust.js || true",
     "bench": "node bench",
+    "bench:rust": "npm run build:rust && node bench",
     "build": "npm run build:bundle && npm run build:types",
     "build:bundle": "gulp --gulpfile scripts/gulpfile.js",
+    "build:rust": "node scripts/build-rust.js",
     "build:types": "node cli/bin/pbts --main --global protobuf --out index.d.ts src/ lib/aspromise/index.js lib/base64/index.js lib/codegen/index.js lib/eventemitter/index.js lib/float/index.js lib/fetch/index.js lib/inquire/index.js lib/path/index.js lib/pool/index.js lib/utf8/index.js",
     "changelog": "node scripts/changelog -w",
     "coverage": "npm run coverage:test && npm run coverage:report",
@@ -98,6 +101,7 @@
   },
   "files": [
     "index.js",
+    "index.node",
     "index.d.ts",
     "light.d.ts",
     "light.js",
@@ -106,9 +110,11 @@
     "package-lock.json",
     "tsconfig.json",
     "scripts/postinstall.js",
+    "scripts/build-rust.js",
     "dist/**",
     "ext/**",
     "google/**",
-    "src/**"
+    "src/**",
+    "rust/**"
   ]
 }
