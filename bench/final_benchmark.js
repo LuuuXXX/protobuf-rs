@@ -138,8 +138,22 @@ tests.forEach(test => {
 
 console.log('='.repeat(70));
 console.log('\n✅ Benchmark complete!\n');
+
+// Calculate actual improvement range
+const improvements = [];
+tests.forEach(test => {
+    const r = results[test.name];
+    if (r && r['OLD Rust'] && r['NEW Rust']) {
+        const improvement = ((r['NEW Rust'] - r['OLD Rust']) / r['OLD Rust'] * 100);
+        improvements.push(improvement);
+    }
+});
+
+const minImprovement = Math.min(...improvements).toFixed(0);
+const maxImprovement = Math.max(...improvements).toFixed(0);
+
 console.log('Key takeaways:');
-console.log('  • NEW Rust is 28-44% faster than OLD Rust');
+console.log(`  • NEW Rust is ${minImprovement}-${maxImprovement}% faster than OLD Rust`);
 console.log('  • Reduced FFI calls from N (per field) to 1 (per message)');
 console.log('  • JavaScript remains fastest due to V8 JIT optimization');
 console.log('  • Further improvements would require binary encoding or V8 Fast API\n');

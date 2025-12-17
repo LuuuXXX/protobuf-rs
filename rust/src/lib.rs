@@ -62,12 +62,20 @@ impl Writer {
                         if let (Ok(Some(low)), Ok(Some(high))) = (obj.get::<_, u32>("low"), obj.get::<_, u32>("high")) {
                             ((high as u64) << 32) | (low as u64)
                         } else {
-                            // Not a Long object, try as number
-                            0
+                            // Not a Long object, try parsing as number
+                            if let Ok(num) = obj.coerce_to_number() {
+                                num.get_double()? as i64 as u64
+                            } else {
+                                0
+                            }
                         }
                     } else {
-                        // Fallback to 0
-                        0
+                        // Try as number directly
+                        if let Ok(num_val) = op.get::<f64>(1) {
+                            num_val.unwrap_or(0.0) as i64 as u64
+                        } else {
+                            0
+                        }
                     };
                     writer.write_varint64(val);
                 }
@@ -77,10 +85,20 @@ impl Writer {
                         if let (Ok(Some(low)), Ok(Some(high))) = (obj.get::<_, u32>("low"), obj.get::<_, i32>("high")) {
                             (((high as i64) << 32) | (low as i64)) as u64
                         } else {
-                            0
+                            // Not a Long object, try parsing as number
+                            if let Ok(num) = obj.coerce_to_number() {
+                                num.get_double()? as i64 as u64
+                            } else {
+                                0
+                            }
                         }
                     } else {
-                        0
+                        // Try as number directly
+                        if let Ok(num_val) = op.get::<f64>(1) {
+                            num_val.unwrap_or(0.0) as i64 as u64
+                        } else {
+                            0
+                        }
                     };
                     writer.write_varint64(val);
                 }
@@ -90,10 +108,20 @@ impl Writer {
                         if let (Ok(Some(low)), Ok(Some(high))) = (obj.get::<_, u32>("low"), obj.get::<_, i32>("high")) {
                             ((high as i64) << 32) | (low as i64)
                         } else {
-                            0
+                            // Not a Long object, try parsing as number
+                            if let Ok(num) = obj.coerce_to_number() {
+                                num.get_double()? as i64
+                            } else {
+                                0
+                            }
                         }
                     } else {
-                        0
+                        // Try as number directly
+                        if let Ok(num_val) = op.get::<f64>(1) {
+                            num_val.unwrap_or(0.0) as i64
+                        } else {
+                            0
+                        }
                     };
                     writer.write_sint64(val);
                 }
@@ -111,10 +139,20 @@ impl Writer {
                         if let (Ok(Some(low)), Ok(Some(high))) = (obj.get::<_, u32>("low"), obj.get::<_, u32>("high")) {
                             ((high as u64) << 32) | (low as u64)
                         } else {
-                            0
+                            // Not a Long object, try parsing as number
+                            if let Ok(num) = obj.coerce_to_number() {
+                                num.get_double()? as i64 as u64
+                            } else {
+                                0
+                            }
                         }
                     } else {
-                        0
+                        // Try as number directly
+                        if let Ok(num_val) = op.get::<f64>(1) {
+                            num_val.unwrap_or(0.0) as i64 as u64
+                        } else {
+                            0
+                        }
                     };
                     writer.write_fixed64(val);
                 }
