@@ -75,7 +75,7 @@ impl Writer {
                     let value: JsUnknown = op.get(1)?.unwrap();
                     let val = if let Ok(obj) = value.coerce_to_object() {
                         if let (Ok(Some(low)), Ok(Some(high))) = (obj.get::<_, u32>("low"), obj.get::<_, i32>("high")) {
-                            ((high as i64) << 32 | low as i64) as u64
+                            (((high as i64) << 32) | (low as i64)) as u64
                         } else {
                             0
                         }
@@ -88,7 +88,7 @@ impl Writer {
                     let value: JsUnknown = op.get(1)?.unwrap();
                     let val = if let Ok(obj) = value.coerce_to_object() {
                         if let (Ok(Some(low)), Ok(Some(high))) = (obj.get::<_, u32>("low"), obj.get::<_, i32>("high")) {
-                            (high as i64) << 32 | (low as i64)
+                            ((high as i64) << 32) | (low as i64)
                         } else {
                             0
                         }
