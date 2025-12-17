@@ -1,17 +1,21 @@
 [package]
-name = "protobuf-rs-ohos"
+name = "protobuf-rs"
 version = "1.0.0"
 edition = "2021"
 authors = ["LuuuXXX"]
-description = "High-performance Protocol Buffers for OpenHarmony"
+description = "High-performance Protocol Buffers implementation with Rust core"
 
 [lib]
+name = "protobuf_rs"
+path = "src/rust/lib.rs"
 crate-type = ["cdylib"]
 
 [dependencies]
 napi = "2.16"
 napi-derive = "2.16"
 byteorder = "1.5"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 
 [build-dependencies]
 napi-build = "2"
@@ -21,3 +25,7 @@ lto = true
 codegen-units = 1
 opt-level = 3
 strip = true
+
+[profile.dev]
+opt-level = 0
+debug = true

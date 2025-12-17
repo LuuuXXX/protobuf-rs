@@ -1,13 +1,31 @@
 {
-  "name": "@protobuf-rs/ohos-core",
+  "name": "protobuf-rs",
   "version": "1.0.0",
-  "description": "High-performance Protocol Buffers for OpenHarmony (Rust core)",
+  "description": "High-performance Protocol Buffers implementation combining protobuf.js with Rust acceleration",
   "main": "index.js",
   "scripts": {
     "build": "cargo build --release",
-    "build:debug": "cargo build"
+    "build:debug": "cargo build",
+    "test": "node protobuf.js/tests/node.js"
   },
-  "keywords": ["protobuf", "ohos", "rust", "performance"],
+  "keywords": ["protobuf", "protocol-buffers", "rust", "performance", "grpc"],
   "author": "LuuuXXX",
-  "license": "MIT"
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "@protobufjs/aspromise": "^1.1.2",
+    "@protobufjs/base64": "^1.1.2",
+    "@protobufjs/eventemitter": "^1.1.0",
+    "@protobufjs/float": "^1.0.2",
+    "@protobufjs/inquire": "^1.1.0",
+    "@protobufjs/path": "^1.1.2",
+    "@protobufjs/pool": "^1.1.0",
+    "@protobufjs/utf8": "^1.1.0",
+    "long": "^5.0.0"
+  },
+  "devDependencies": {
+    "cargo-cp-artifact": "^0.1"
+  },
+  "napi": {
+    "name": "protobuf-rs"
+  }
 }
