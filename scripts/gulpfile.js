@@ -17,9 +17,9 @@ function defineTask(name, entry, target) {
     ), function(done) { done(); });
 }
 
-defineTask("full"   , "../src/index"        , "../dist"        );
-defineTask("light"  , "../src/index-light"  , "../dist/light"  );
-defineTask("minimal", "../src/index-minimal", "../dist/minimal");
+defineTask("full"   , "../src/protobuf-js/index"        , "../dist"        );
+defineTask("light"  , "../src/protobuf-js/index-light"  , "../dist/light"  );
+defineTask("minimal", "../src/protobuf-js/index-minimal", "../dist/minimal");
 
 gulp.task("default", gulp.parallel(
     "full",
