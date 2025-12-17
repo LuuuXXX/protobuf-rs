@@ -3,6 +3,7 @@
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use napi::Either;
+use napi::JsUnknown;
 
 mod writer;
 mod reader;
@@ -22,6 +23,128 @@ impl Writer {
         Writer {
             inner: WriterImpl::new(),
         }
+    }
+
+    /// Batch encode all operations (new: core optimization)
+    /// This is the key performance optimization - processes all operations in one FFI call
+    #[napi]
+    pub fn encode_all(operations: Array) -> Result<Buffer> {
+        let mut writer = WriterImpl::new();
+        let len = operations.len();
+        
+        for i in 0..len {
+            let op: Array = operations.get(i)?.unwrap();
+            if op.len() < 2 {
+                continue;
+            }
+            
+            let op_type: String = op.get(0)?.unwrap();
+            
+            match op_type.as_str() {
+                "u32" => {
+                    let value: u32 = op.get(1)?.unwrap();
+                    writer.write_varint32(value);
+                }
+                "i32" => {
+                    let value: i32 = op.get(1)?.unwrap();
+                    // Negative numbers encode as 10 byte varint
+                    if value < 0 {
+                        writer.write_varint64(value as i64 as u64);
+                    } else {
+                        writer.write_varint32(value as u32);
+                    }
+                }
+                "u64" => {
+                    // Handle Long.js object or number  
+                    let value: JsUnknown = op.get(1)?.unwrap();
+                    // Try as object first (Long.js)
+                    let val = if let Ok(obj) = value.coerce_to_object() {
+                        if let (Ok(Some(low)), Ok(Some(high))) = (obj.get::<_, u32>("low"), obj.get::<_, u32>("high")) {
+                            ((high as u64) << 32) | (low as u64)
+                        } else {
+                            // Not a Long object, try as number
+                            0
+                        }
+                    } else {
+                        // Fallback to 0
+                        0
+                    };
+                    writer.write_varint64(val);
+                }
+                "i64" => {
+                    let value: JsUnknown = op.get(1)?.unwrap();
+                    let val = if let Ok(obj) = value.coerce_to_object() {
+                        if let (Ok(Some(low)), Ok(Some(high))) = (obj.get::<_, u32>("low"), obj.get::<_, i32>("high")) {
+                            ((high as i64) << 32 | low as i64) as u64
+                        } else {
+                            0
+                        }
+                    } else {
+                        0
+                    };
+                    writer.write_varint64(val);
+                }
+                "s64" => {
+                    let value: JsUnknown = op.get(1)?.unwrap();
+                    let val = if let Ok(obj) = value.coerce_to_object() {
+                        if let (Ok(Some(low)), Ok(Some(high))) = (obj.get::<_, u32>("low"), obj.get::<_, i32>("high")) {
+                            (high as i64) << 32 | (low as i64)
+                        } else {
+                            0
+                        }
+                    } else {
+                        0
+                    };
+                    writer.write_sint64(val);
+                }
+                "bool" => {
+                    let value: bool = op.get(1)?.unwrap();
+                    writer.write_varint32(if value { 1 } else { 0 });
+                }
+                "f32" => {
+                    let value: u32 = op.get(1)?.unwrap();
+                    writer.write_fixed32(value);
+                }
+                "f64" => {
+                    let value: JsUnknown = op.get(1)?.unwrap();
+                    let val = if let Ok(obj) = value.coerce_to_object() {
+                        if let (Ok(Some(low)), Ok(Some(high))) = (obj.get::<_, u32>("low"), obj.get::<_, u32>("high")) {
+                            ((high as u64) << 32) | (low as u64)
+                        } else {
+                            0
+                        }
+                    } else {
+                        0
+                    };
+                    writer.write_fixed64(val);
+                }
+                "float" => {
+                    let value: f64 = op.get(1)?.unwrap();
+                    writer.write_float(value as f32);
+                }
+                "double" => {
+                    let value: f64 = op.get(1)?.unwrap();
+                    writer.write_double(value);
+                }
+                "bytes" => {
+                    let buffer: Buffer = op.get(1)?.unwrap();
+                    let bytes = buffer.as_ref();
+                    writer.write_varint32(bytes.len() as u32);
+                    writer.write_bytes(bytes);
+                }
+                "string" => {
+                    let value: String = op.get(1)?.unwrap();
+                    let bytes = value.as_bytes();
+                    writer.write_varint32(bytes.len() as u32);
+                    writer.write_bytes(bytes);
+                }
+                _ => {
+                    // Ignore unknown operations
+                }
+            }
+        }
+        
+        Ok(writer.finish().into())
     }
 
     #[napi]
