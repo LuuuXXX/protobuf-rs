@@ -9,6 +9,10 @@ try {
     nativeBinding = require('./index.node');
 } catch (e) {
     // Native bindings not available, will use pure JavaScript fallback
+    if (process.env.DEBUG) {
+        console.warn('Native Rust bindings not available:', e.message);
+        console.warn('Falling back to pure JavaScript implementation');
+    }
     nativeBinding = null;
 }
 
@@ -26,7 +30,10 @@ if (nativeBinding) {
                 try {
                     this._rustReader = new RustReader(buffer);
                 } catch (e) {
-                    // Fallback to JS implementation
+                    // Specific error: buffer validation failed, log if debugging
+                    if (process.env.DEBUG) {
+                        console.warn('Failed to create Rust reader:', e.message);
+                    }
                     this._rustReader = null;
                 }
             }
@@ -41,7 +48,10 @@ if (nativeBinding) {
                 try {
                     this._rustWriter = new RustWriter();
                 } catch (e) {
-                    // Fallback to JS implementation
+                    // Specific error: writer initialization failed, log if debugging
+                    if (process.env.DEBUG) {
+                        console.warn('Failed to create Rust writer:', e.message);
+                    }
                     this._rustWriter = null;
                 }
             }

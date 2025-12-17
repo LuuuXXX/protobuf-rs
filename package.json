@@ -4,8 +4,8 @@
   "description": "High-performance Protocol Buffers implementation combining protobuf.js with Rust acceleration",
   "main": "index.js",
   "scripts": {
-    "build": "cargo build --release && cp target/release/libprotobuf_rs.so index.node",
-    "build:debug": "cargo build && cp target/debug/libprotobuf_rs.so index.node",
+    "build": "cargo build --release && node -e \"require('fs').copyFileSync(process.platform === 'win32' ? 'target/release/protobuf_rs.dll' : process.platform === 'darwin' ? 'target/release/libprotobuf_rs.dylib' : 'target/release/libprotobuf_rs.so', 'index.node')\"",
+    "build:debug": "cargo build && node -e \"require('fs').copyFileSync(process.platform === 'win32' ? 'target/debug/protobuf_rs.dll' : process.platform === 'darwin' ? 'target/debug/libprotobuf_rs.dylib' : 'target/debug/libprotobuf_rs.so', 'index.node')\"",
     "test": "node test-integration.js"
   },
   "keywords": ["protobuf", "protocol-buffers", "rust", "performance", "grpc"],
