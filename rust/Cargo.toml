@@ -1,0 +1,22 @@
+[package]
+name = "protobuf-rs"
+version = "8.0.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+name = "protobuf_rs"
+
+[dependencies]
+napi = "2.16"
+napi-derive = "2.16"
+
+[build-dependencies]
+napi-build = "2.1"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+strip = true
+panic = "abort"
