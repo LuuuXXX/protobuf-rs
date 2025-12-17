@@ -13,3 +13,13 @@ yarn-error.log*
 *.iml
 .cargo/
 Cargo.lock
+
+# Build artifacts
+src/rust-wasm/
+src/rust/target/
+dist/
+*.wasm
+pkg/
+
+# Backup files
+.backup-root/
