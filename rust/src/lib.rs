@@ -2,6 +2,7 @@
 
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
+use napi::Either;
 
 mod writer;
 mod reader;
@@ -47,20 +48,47 @@ impl Writer {
     }
 
     #[napi]
-    pub fn uint64(&mut self, value: i64) -> &Self {
-        self.inner.write_varint64(value as u64);
+    pub fn uint64(&mut self, value: Either<i64, Object>) -> &Self {
+        let val = match value {
+            Either::A(num) => num as u64,
+            Either::B(obj) => {
+                // Handle Long object with low and high parts
+                let low: u32 = obj.get::<_, u32>("low").ok().flatten().unwrap_or(0);
+                let high: u32 = obj.get::<_, u32>("high").ok().flatten().unwrap_or(0);
+                ((high as u64) << 32) | (low as u64)
+            }
+        };
+        self.inner.write_varint64(val);
         self
     }
 
     #[napi]
-    pub fn int64(&mut self, value: i64) -> &Self {
-        self.inner.write_varint64(value as u64);
+    pub fn int64(&mut self, value: Either<i64, Object>) -> &Self {
+        let val = match value {
+            Either::A(num) => num as u64,
+            Either::B(obj) => {
+                // Handle Long object with low and high parts
+                let low: u32 = obj.get::<_, u32>("low").ok().flatten().unwrap_or(0);
+                let high: i32 = obj.get::<_, i32>("high").ok().flatten().unwrap_or(0);
+                (((high as i64) << 32) | (low as i64)) as u64
+            }
+        };
+        self.inner.write_varint64(val);
         self
     }
 
     #[napi]
-    pub fn sint64(&mut self, value: i64) -> &Self {
-        self.inner.write_sint64(value);
+    pub fn sint64(&mut self, value: Either<i64, Object>) -> &Self {
+        let val = match value {
+            Either::A(num) => num,
+            Either::B(obj) => {
+                // Handle Long object with low and high parts
+                let low: u32 = obj.get::<_, u32>("low").ok().flatten().unwrap_or(0);
+                let high: i32 = obj.get::<_, i32>("high").ok().flatten().unwrap_or(0);
+                ((high as i64) << 32) | (low as i64)
+            }
+        };
+        self.inner.write_sint64(val);
         self
     }
 
@@ -83,14 +111,32 @@ impl Writer {
     }
 
     #[napi]
-    pub fn fixed64(&mut self, value: i64) -> &Self {
-        self.inner.write_fixed64(value as u64);
+    pub fn fixed64(&mut self, value: Either<i64, Object>) -> &Self {
+        let val = match value {
+            Either::A(num) => num as u64,
+            Either::B(obj) => {
+                // Handle Long object with low and high parts
+                let low: u32 = obj.get::<_, u32>("low").ok().flatten().unwrap_or(0);
+                let high: u32 = obj.get::<_, u32>("high").ok().flatten().unwrap_or(0);
+                ((high as u64) << 32) | (low as u64)
+            }
+        };
+        self.inner.write_fixed64(val);
         self
     }
 
     #[napi]
-    pub fn sfixed64(&mut self, value: i64) -> &Self {
-        self.inner.write_fixed64(value as u64);
+    pub fn sfixed64(&mut self, value: Either<i64, Object>) -> &Self {
+        let val = match value {
+            Either::A(num) => num as u64,
+            Either::B(obj) => {
+                // Handle Long object with low and high parts
+                let low: u32 = obj.get::<_, u32>("low").ok().flatten().unwrap_or(0);
+                let high: i32 = obj.get::<_, i32>("high").ok().flatten().unwrap_or(0);
+                (((high as i64) << 32) | (low as i64)) as u64
+            }
+        };
+        self.inner.write_fixed64(val);
         self
     }
 

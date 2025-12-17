@@ -197,6 +197,19 @@ impl ReaderImpl {
                 let len = self.read_varint32()? as usize;
                 self.skip(len)
             }
+            3 => {
+                // Start group (deprecated) - read until end group (wire type 4)
+                loop {
+                    let field_and_type = self.read_varint32()?;
+                    let wire_type = field_and_type & 7;
+                    if wire_type == 4 {
+                        // End group
+                        break;
+                    }
+                    self.skip_type(wire_type)?;
+                }
+                Ok(())
+            }
             5 => {
                 // 32-bit
                 self.skip(4)

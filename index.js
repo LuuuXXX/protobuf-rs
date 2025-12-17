@@ -48,36 +48,17 @@ if (usingRust) {
         }
         
         uint64(value) {
-            // Handle Long objects from long.js
-            if (value && typeof value === 'object' && value.low !== undefined && value.high !== undefined) {
-                // Use the low and high parts directly
-                const num = (value.low >>> 0) + (value.high >>> 0) * 0x100000000;
-                this._native.uint64(num);
-            } else {
-                this._native.uint64(value);
-            }
+            this._native.uint64(value);
             return this;
         }
         
         int64(value) {
-            // Handle Long objects from long.js
-            if (value && typeof value === 'object' && value.low !== undefined && value.high !== undefined) {
-                const num = (value.low >>> 0) + (value.high | 0) * 0x100000000;
-                this._native.int64(num);
-            } else {
-                this._native.int64(value);
-            }
+            this._native.int64(value);
             return this;
         }
         
         sint64(value) {
-            // Handle Long objects from long.js
-            if (value && typeof value === 'object' && value.low !== undefined && value.high !== undefined) {
-                const num = (value.low >>> 0) + (value.high | 0) * 0x100000000;
-                this._native.sint64(num);
-            } else {
-                this._native.sint64(value);
-            }
+            this._native.sint64(value);
             return this;
         }
         
@@ -97,24 +78,12 @@ if (usingRust) {
         }
         
         fixed64(value) {
-            // Handle Long objects from long.js
-            if (value && typeof value === 'object' && value.low !== undefined && value.high !== undefined) {
-                const num = (value.low >>> 0) + (value.high >>> 0) * 0x100000000;
-                this._native.fixed64(num);
-            } else {
-                this._native.fixed64(value);
-            }
+            this._native.fixed64(value);
             return this;
         }
         
         sfixed64(value) {
-            // Handle Long objects from long.js
-            if (value && typeof value === 'object' && value.low !== undefined && value.high !== undefined) {
-                const num = (value.low >>> 0) + (value.high | 0) * 0x100000000;
-                this._native.sfixed64(num);
-            } else {
-                this._native.sfixed64(value);
-            }
+            this._native.sfixed64(value);
             return this;
         }
         
@@ -181,6 +150,17 @@ if (usingRust) {
         
         get len() {
             return this._native.len;
+        }
+        
+        static _configure(BufferWriter_) {
+            // For compatibility with original Writer._configure
+            // The Rust implementation doesn't need this, but we keep it for compatibility
+            return;
+        }
+        
+        static alloc(size) {
+            // For compatibility with original Writer.alloc
+            return Buffer.allocUnsafe(size);
         }
     }
     
@@ -311,6 +291,12 @@ if (usingRust) {
         
         get len() {
             return this._native.len;
+        }
+        
+        static _configure(BufferReader_) {
+            // For compatibility with original Reader._configure
+            // The Rust implementation doesn't need this, but we keep it for compatibility
+            return;
         }
     }
     
