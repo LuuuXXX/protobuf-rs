@@ -23,9 +23,13 @@ if (usingRust) {
     const OriginalBufferWriter = protobuf.BufferWriter;
     
     // Wrap native Writer to ensure chainability and API compatibility
+    // Optimized batch operation approach: accumulate all operations in JS and send to Rust once
     class RustWriter {
         constructor() {
-            this._native = new nativeBinding.Writer();
+            // Accumulate operations instead of calling Rust immediately
+            this._operations = [];
+            this._len = 0;
+            this._states = [];  // Support fork/ldelim
         }
         
         static create() {
@@ -33,134 +37,170 @@ if (usingRust) {
         }
         
         uint32(value) {
-            this._native.uint32(value);
+            value = value >>> 0;
+            this._operations.push(['u32', value]);
+            // Pre-calculate length (same as original JS implementation)
+            this._len += value < 128 ? 1
+                      : value < 16384 ? 2
+                      : value < 2097152 ? 3
+                      : value < 268435456 ? 4 : 5;
             return this;
         }
         
         int32(value) {
-            this._native.int32(value);
+            if (value < 0) {
+                // Negative numbers encode to 10 bytes
+                this._operations.push(['i32', value]);
+                this._len += 10;
+            } else {
+                return this.uint32(value);
+            }
             return this;
         }
         
         sint32(value) {
-            this._native.sint32(value);
-            return this;
+            const encoded = ((value << 1) ^ (value >> 31)) >>> 0;
+            return this.uint32(encoded);
         }
         
         uint64(value) {
-            this._native.uint64(value);
+            this._operations.push(['u64', value]);
+            // Simplified: max 10 bytes
+            this._len += 10;
             return this;
         }
         
         int64(value) {
-            this._native.int64(value);
+            this._operations.push(['i64', value]);
+            this._len += 10;
             return this;
         }
         
         sint64(value) {
-            this._native.sint64(value);
+            this._operations.push(['s64', value]);
+            this._len += 10;
             return this;
         }
         
         bool(value) {
-            this._native.bool(value);
+            this._operations.push(['bool', value]);
+            this._len += 1;
             return this;
         }
         
         fixed32(value) {
-            this._native.fixed32(value);
+            this._operations.push(['f32', value >>> 0]);
+            this._len += 4;
             return this;
         }
         
         sfixed32(value) {
-            this._native.sfixed32(value);
-            return this;
+            return this.fixed32(value);
         }
         
         fixed64(value) {
-            this._native.fixed64(value);
+            this._operations.push(['f64', value]);
+            this._len += 8;
             return this;
         }
         
         sfixed64(value) {
-            this._native.sfixed64(value);
-            return this;
+            return this.fixed64(value);
         }
         
         float(value) {
-            this._native.float(value);
+            this._operations.push(['float', value]);
+            this._len += 4;
             return this;
         }
         
         double(value) {
-            this._native.double(value);
+            this._operations.push(['double', value]);
+            this._len += 8;
             return this;
         }
         
         bytes(value) {
-            // Handle different input types like the original Writer
             if (!value || value.length === 0) {
-                this._native.uint32(0);
-                return this;
+                return this.uint32(0);
             }
             
-            // Convert to Buffer if needed
             let buffer;
             if (typeof value === 'string') {
-                // Base64 encoded string
                 buffer = Buffer.from(value, 'base64');
             } else if (Array.isArray(value)) {
-                // Plain array
                 buffer = Buffer.from(value);
             } else {
-                // Already a Buffer or Uint8Array
                 buffer = value;
             }
             
-            // Write length prefix
-            this._native.uint32(buffer.length);
-            // Write bytes
-            this._native.bytes(buffer);
+            this._operations.push(['bytes', buffer]);
+            const len = buffer.length;
+            this._len += (len < 128 ? 1 : len < 16384 ? 2 : len < 2097152 ? 3 : len < 268435456 ? 4 : 5) + len;
             return this;
         }
         
         string(value) {
-            this._native.string(value);
+            const len = Buffer.byteLength(value, 'utf8');
+            if (len === 0) {
+                return this.uint32(0);
+            }
+            this._operations.push(['string', value]);
+            this._len += (len < 128 ? 1 : len < 16384 ? 2 : len < 2097152 ? 3 : len < 268435456 ? 4 : 5) + len;
             return this;
         }
         
         fork() {
-            this._native.fork();
+            this._states.push({
+                operations: this._operations.slice(),
+                len: this._len
+            });
+            this._operations = [];
+            this._len = 0;
             return this;
         }
         
         reset() {
-            this._native.reset();
+            if (this._states.length > 0) {
+                const state = this._states.pop();
+                this._operations = state.operations;
+                this._len = state.len;
+            } else {
+                this._operations = [];
+                this._len = 0;
+            }
             return this;
         }
         
         ldelim() {
-            this._native.ldelim();
+            const forkOps = this._operations;
+            const forkLen = this._len;
+            
+            this.reset();
+            this.uint32(forkLen);
+            
+            // Merge fork operations
+            this._operations.push(...forkOps);
+            this._len += forkLen;
+            
             return this;
         }
         
         finish() {
-            return this._native.finish();
+            // 💥 Key optimization: only cross FFI boundary once!
+            return nativeBinding.Writer.encodeAll(this._operations);
         }
         
         get len() {
-            return this._native.len;
-        }
-        
-        static _configure(BufferWriter_) {
-            // For compatibility with original Writer._configure
-            // The Rust implementation doesn't need this, but we keep it for compatibility
-            return;
+            return this._len;
         }
         
         static alloc(size) {
-            // For compatibility with original Writer.alloc
             return Buffer.allocUnsafe(size);
+        }
+        
+        static _configure() {
+            // Compatibility placeholder
         }
     }
     
